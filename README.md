@@ -1,9 +1,10 @@
 # Hechizo Matemático Demo
 
-Two demos in one repo:
+Three demos in one repo:
 
 1. **El Hechizo Matemático** — Cosine similarity “matchmaking” over latent vectors (3D visualization).
 2. **Sociological Profiling Demo** — Image + EXIF “vibe” analysis with YOLO and a HUD overlay (educational only).
+3. **Elo Ranking & Network Meritocracy** — Dating app as a network of nodes; Match = success, Dislike = latency; High-Elo = High-Priority with exponential SRE-style adjustments and a load balancer to avoid a single super-node.
 
 ---
 
@@ -75,7 +76,8 @@ pip install -r requirements.txt
 
 This installs:
 
-- `numpy`, `matplotlib`, `scikit-learn`, `rich` — for the Hechizo Matemático demo.
+- `numpy`, `matplotlib`, `scikit-learn` — for the Hechizo Matemático demo.
+- `rich` — for the Hechizo Matemático and Elo Ranking (live dashboard) demos.
 - `opencv-python` — for video/image and the profiler HUD.
 - `Pillow` — for image loading and EXIF in the profiler.
 - `ultralytics` — for YOLO object detection in the profiler.
@@ -141,6 +143,21 @@ python sociological_profiler.py --image path/to/your/photo.jpg
 ```bash
 python sociological_profiler.py --webcam --camera 1
 ```
+
+---
+
+### Demo 3: Elo Ranking & Network Meritocracy
+
+```bash
+python elo_ranking_sim.py
+```
+
+- **Concept:** The dating app user base is a network of nodes. A **Match** is a successful transaction; a **Dislike** is a latency/timeout.
+- **Console (Rich):** Live-updating dashboard with:
+  - **Top 10 Profiles (Nodes)** by Elo.
+  - **System Entropy** (SRE health).
+  - **Real-time transaction log** (Match vs Dislike and score deltas).
+- High-Elo nodes behave as High-Priority nodes; when they interact with Low-Priority nodes, score adjustment is exponential. A **Load Balancer** prevents the simulation from converging into a single super-node.
 
 ---
 
@@ -221,8 +238,9 @@ python sociological_profiler.py --image "/path/with spaces/photo.jpg"
 hechizo_matematico_demo/
 ├── README.md                 # This file
 ├── requirements.txt          # Python dependencies
-├── hechizo_matematico.py     # Cosine similarity + 3D plot demo
-├── sociological_profiler.py  # Vibe/EXIF profiling demo (YOLO + OpenCV)
+├── hechizo_matematico.py     # Demo 1: Cosine similarity + 3D plot
+├── elo_ranking_sim.py        # Demo 3: Elo ranking as SRE infrastructure
+├── sociological_profiler.py # Demo 2: Vibe/EXIF profiling (YOLO + OpenCV)
 └── .venv/                    # Virtual environment (create with python3 -m venv .venv)
 ```
 
@@ -236,6 +254,7 @@ hechizo_matematico_demo/
 | Activate venv (macOS/Linux) | `source .venv/bin/activate` |
 | Install deps | `pip install -r requirements.txt` |
 | Run Hechizo Matemático | `python hechizo_matematico.py` |
+| Run Elo Ranking sim | `python elo_ranking_sim.py` |
 | Run profiler (webcam) | `python sociological_profiler.py --webcam` |
 | Run profiler (image) | `python sociological_profiler.py --image photo.jpg` |
 | Quit webcam view | Press `q` in the OpenCV window |
