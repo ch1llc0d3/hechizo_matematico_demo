@@ -1162,7 +1162,7 @@
     <!-- ============ INTERACTIVE ELO / POPULARITY GAME ============ -->
     <section id="elo" aria-labelledby="elo-title">
       <h2 id="elo-title" data-i18n="eloTitle">The Popularity Game, in your browser 📈</h2>
-      <p class="section-intro" data-i18n-html="eloIntro">A mini version of <code>elo_ranking_sim.py</code>, no Python required. 50 nodes with Elo scores trade matches and dislikes while a load balancer keeps any super-node from taking over — the same math, running live.</p>
+      <p class="section-intro" data-i18n-html="eloIntro">Imagine a tiny dating app with 50 singles. Every time two of them cross paths, their <strong>popularity score</strong> goes up or down — the same trick chess clubs use to rank players, and the same idea real matchmaking apps use behind the scenes. Press start and watch popularity happen. No math degree required.</p>
 
       <div class="elo-shell">
         <div>
@@ -1181,10 +1181,10 @@
               <thead>
                 <tr>
                   <th data-i18n="eloColRank">#</th>
-                  <th data-i18n="eloColNode">Node</th>
-                  <th class="num" data-i18n="eloColElo">Elo</th>
-                  <th class="num" data-i18n="eloColMatches">Matches</th>
-                  <th class="num" data-i18n="eloColDislikes">Dislikes</th>
+                  <th data-i18n="eloColNode">Single</th>
+                  <th class="num" data-i18n="eloColElo">Popularity</th>
+                  <th class="num" data-i18n="eloColMatches">Good dates</th>
+                  <th class="num" data-i18n="eloColDislikes">Bad dates</th>
                 </tr>
               </thead>
               <tbody id="elo-tbody"></tbody>
@@ -1194,14 +1194,14 @@
 
         <div class="elo-side">
           <div class="elo-panel">
-            <h3 data-i18n="eloEntropyTitle">SRE Health — System Entropy</h3>
+            <h3 data-i18n="eloEntropyTitle">Fairness meter — who's getting the attention?</h3>
             <div class="stat-grid" style="margin-bottom: 0;">
               <div class="stat">
-                <span class="k" data-i18n="eloStatEntropy">Entropy</span>
+                <span class="k" data-i18n="eloStatEntropy">Fairness</span>
                 <span class="v" id="elo-entropy-val">—</span>
               </div>
               <div class="stat">
-                <span class="k" data-i18n="eloStatTicks">Transactions</span>
+                <span class="k" data-i18n="eloStatTicks">Encounters</span>
                 <span class="v" id="elo-ticks">0</span>
               </div>
             </div>
@@ -1209,7 +1209,7 @@
           </div>
 
           <div class="elo-panel">
-            <h3 data-i18n="eloLogTitle">Live transaction log</h3>
+            <h3 data-i18n="eloLogTitle">Live gossip feed</h3>
             <ul class="elo-log" id="elo-log" aria-live="polite"></ul>
           </div>
 
@@ -1220,15 +1220,19 @@
       <br>
 
       <div class="formula" data-i18n-html="eloFormulaHtml">
-        <strong style="color: var(--gold)">How the spell works:</strong>
-        every node starts at Elo&nbsp;1500 and each transaction uses standard Elo:
-        <code>E = 1 / (1 + 10^((eloB − eloA)/400))</code>. A <em>Match</em> is a successful
-        transaction (both nodes win); a <em>Dislike</em> is a timeout — the lower-Elo node
-        takes the full loss while the high-Elo node only loses 30%. When a high-priority
-        node meets a low-priority one, the K-factor scales exponentially
-        (<code>K = 32 · (1 + gap/400)^1.4</code>, capped at 128). A load balancer blends
-        merit-based and uniform selection (weight&nbsp;0.6) so no super-node monopolizes
-        traffic, and <em>system entropy</em> measures how evenly the Elo mass is spread.
+        <strong style="color: var(--gold)">How the spell works (the friendly version):</strong>
+        everyone starts with the same popularity score (1500). When two singles meet, the
+        score moves like a chess rating: a <em>good date</em> lifts both of them, while a
+        <em>bad date</em> stings — and it stings the less popular one much more (the popular
+        one shrugs off 70% of it). Big surprises move scores the most: if an underdog wins
+        over a superstar, the underdog's score rockets. And there's a matchmaker in the
+        background making sure the popular kids don't hog all the attention — it
+        deliberately mixes things up so everyone gets a chance to meet. The
+        <em>fairness meter</em> shows how evenly the attention is spread: full bar =
+        everyone's getting some love. For the curious, the exact recipe is the classic Elo
+        formula <code>E = 1 / (1 + 10^((eloB − eloA)/400))</code> with an upset bonus
+        <code>K = 32 · (1 + gap/400)^1.4</code> (capped at 128) and a matchmaker that blends
+        merit-based and random pairing (weight&nbsp;0.6).
       </div>
     </section>
 
@@ -1278,7 +1282,7 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           card2Title: "Spell 2 — The Digital Eye",
           card2Desc: "YOLO object detection on your webcam or a photo, plus EXIF metadata reading — when, where, which camera. A gossiping crystal ball for images. Educational only.",
           card3Title: "Spell 3 — The Popularity Game",
-          card3Desc: "A pretend dating app run like an SRE system: 50 nodes with Elo scores, matches are successful transactions, dislikes are timeouts, and a load balancer keeps super-nodes in check.",
+          card3Desc: "Ever wondered why some profiles get all the attention? Watch 50 singles in a pretend dating app gain and lose popularity with every encounter — the same rating math chess uses, and the same fairness trick real apps use so the popular kids don't hog everyone.",
           card4Title: "Bonus Spell — The HA Love Cluster",
           card4Desc: "The Popularity Game’s sibling: exponential network effects when high-Elo nodes meet low-Elo nodes, traffic-aware load balancing, and a live Tier 1 “Desirability Peak” promotion log.",
           compassTitle: "The Love Compass, in your browser 💘",
@@ -1332,26 +1336,26 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           eyeExifOrient: "Orientation",
           eyeFormulaHtml: "<strong style=\"color: var(--gold)\">How the spell works:</strong> the browser eye downsamples your photo and measures <code>brightness</code> (mean luma) and a <code>dominant palette</code> (coarse color quantization). It also hand-parses the JPEG <code>EXIF</code> segment — camera, timestamp, orientation, even GPS — the same metadata <code>sociological_profiler.py</code> reads with Pillow. The real YOLO object detection needs Python; this is its playful browser cousin. Educational only — no images leave your device.",
           eloTitle: "The Popularity Game, in your browser 📈",
-          eloIntro: "A mini version of <code>elo_ranking_sim.py</code>, no Python required. 50 nodes with Elo scores trade matches and dislikes while a load balancer keeps any super-node from taking over — the same math, running live.",
+          eloIntro: "Imagine a tiny dating app with 50 singles. Every time two of them cross paths, their <strong>popularity score</strong> goes up or down — the same trick chess clubs use to rank players, and the same idea real matchmaking apps use behind the scenes. Press start and watch popularity happen. No math degree required.",
           eloRunBtn: "▶️ Start simulation",
           eloPauseBtn: "⏸️ Pause",
           eloResetBtn: "🔄 Reset",
           eloSpeed: "Speed",
           eloColRank: "#",
-          eloColNode: "Node",
-          eloColElo: "Elo",
-          eloColMatches: "Matches",
-          eloColDislikes: "Dislikes",
-          eloEntropyTitle: "SRE Health — System Entropy",
-          eloStatEntropy: "Entropy",
-          eloStatTicks: "Transactions",
-          eloLogTitle: "Live transaction log",
-          eloFormulaHtml: "<strong style=\"color: var(--gold)\">How the spell works:</strong> every node starts at Elo&nbsp;1500 and each transaction uses standard Elo: <code>E = 1 / (1 + 10^((eloB − eloA)/400))</code>. A <em>Match</em> is a successful transaction (both nodes win); a <em>Dislike</em> is a timeout — the lower-Elo node takes the full loss while the high-Elo node only loses 30%. When a high-priority node meets a low-priority one, the K-factor scales exponentially (<code>K = 32 · (1 + gap/400)^1.4</code>, capped at 128). A load balancer blends merit-based and uniform selection (weight&nbsp;0.6) so no super-node monopolizes traffic, and <em>system entropy</em> measures how evenly the Elo mass is spread.",
-          eloRunning: "Simulation running — watch the tiers shake out 🛡️",
-          eloPaused: "Paused — the cluster is holding its breath…",
-          eloResetDone: "Cluster reset — 50 fresh nodes at Elo 1500.",
-          eloMatch: "Match",
-          eloDislike: "Dislike",
+          eloColNode: "Single",
+          eloColElo: "Popularity",
+          eloColMatches: "Good dates",
+          eloColDislikes: "Bad dates",
+          eloEntropyTitle: "Fairness meter — who's getting the attention?",
+          eloStatEntropy: "Fairness",
+          eloStatTicks: "Encounters",
+          eloLogTitle: "Live gossip feed",
+          eloFormulaHtml: "<strong style=\"color: var(--gold)\">How the spell works (the friendly version):</strong> everyone starts with the same popularity score (1500). When two singles meet, the score moves like a chess rating: a <em>good date</em> lifts both of them, while a <em>bad date</em> stings — and it stings the less popular one much more (the popular one shrugs off 70% of it). Big surprises move scores the most: if an underdog wins over a superstar, the underdog's score rockets. And there's a matchmaker in the background making sure the popular kids don't hog all the attention — it deliberately mixes things up so everyone gets a chance to meet. The <em>fairness meter</em> shows how evenly the attention is spread: full bar = everyone's getting some love. For the curious, the exact recipe is the classic Elo formula <code>E = 1 / (1 + 10^((eloB − eloA)/400))</code> with an upset bonus <code>K = 32 · (1 + gap/400)^1.4</code> (capped at 128) and a matchmaker that blends merit-based and random pairing (weight&nbsp;0.6).",
+          eloRunning: "The dating scene is buzzing — watch the popular crowd form 🛡️",
+          eloPaused: "Paused — everyone's catching their breath…",
+          eloResetDone: "Fresh start — 50 singles, all equally (un)popular.",
+          eloMatch: "Good date",
+          eloDislike: "Bad date",
           card3LinkAria: "Open the interactive Popularity Game",
           svgIdleAria: "Compass idle: at least one profile vector is empty.",
           matchLine: "💘 IMMINENT MATCH",
@@ -1380,7 +1384,7 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           card2Title: "Hechizo 2 — El Ojo Digital",
           card2Desc: "Detección de objetos YOLO en tu webcam o una foto, más lectura de metadatos EXIF — cuándo, dónde, qué cámara. Una bola de cristal chismosa para imágenes. Solo con fines educativos.",
           card3Title: "Hechizo 3 — El Juego de la Popularidad",
-          card3Desc: "Una app de citas de mentira dirigida como un sistema SRE: 50 nodos con puntuaciones Elo, los matches son transacciones exitosas, los dislikes son timeouts, y un balanceador mantiene a raya a los supernodos.",
+          card3Desc: "¿Alguna vez te preguntaste por qué unos perfiles acaparan toda la atención? Mira a 50 solteros de una app de citas de mentira ganar y perder popularidad con cada encuentro — la misma matemática de puntuaciones del ajedrez, y el mismo truco de justicia que usan las apps reales para que los populares no lo dominen todo.",
           card4Title: "Hechizo Bonus — El Clúster de Amor de Alta Disponibilidad",
           card4Desc: "El hermano del Juego de la Popularidad: efectos de red exponenciales cuando nodos con Elo alto conocen nodos con Elo bajo, balanceo consciente del tráfico y un registro en vivo de promociones al Nivel 1 «Pico de Deseabilidad».",
           compassTitle: "La Brújula del Amor, en tu navegador 💘",
@@ -1434,26 +1438,26 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           eyeExifOrient: "Orientación",
           eyeFormulaHtml: "<strong style=\"color: var(--gold)\">Cómo funciona el hechizo:</strong> el ojo del navegador reduce tu foto y mide el <code>brillo</code> (luma medio) y una <code>paleta dominante</code> (cuantización gruesa de color). También parsea a mano el segmento <code>EXIF</code> del JPEG — cámara, fecha, orientación, hasta GPS — los mismos metadatos que <code>sociological_profiler.py</code> lee con Pillow. La detección de objetos YOLO real necesita Python; este es su primo juguetón del navegador. Solo con fines educativos — ninguna imagen sale de tu dispositivo.",
           eloTitle: "El Juego de la Popularidad, en tu navegador 📈",
-          eloIntro: "Una mini versión de <code>elo_ranking_sim.py</code>, sin necesidad de Python. 50 nodos con puntuaciones Elo intercambian matches y dislikes mientras un balanceador evita que un supernodo lo domine todo — la misma matemática, corriendo en vivo.",
+          eloIntro: "Imagina una app de citas diminuta con 50 solteros. Cada vez que dos se cruzan, su <strong>puntuación de popularidad</strong> sube o baja — el mismo truco que usan los clubes de ajedrez para rankear jugadores, y la misma idea que las apps de citas reales usan entre bastidores. Dale a empezar y mira cómo nace la popularidad. No hace falta saber de mates.",
           eloRunBtn: "▶️ Iniciar simulación",
           eloPauseBtn: "⏸️ Pausar",
           eloResetBtn: "🔄 Reiniciar",
           eloSpeed: "Velocidad",
           eloColRank: "#",
-          eloColNode: "Nodo",
-          eloColElo: "Elo",
-          eloColMatches: "Matches",
-          eloColDislikes: "Dislikes",
-          eloEntropyTitle: "Salud SRE — Entropía del Sistema",
-          eloStatEntropy: "Entropía",
-          eloStatTicks: "Transacciones",
-          eloLogTitle: "Registro de transacciones en vivo",
-          eloFormulaHtml: "<strong style=\"color: var(--gold)\">Cómo funciona el hechizo:</strong> cada nodo empieza en Elo&nbsp;1500 y cada transacción usa Elo estándar: <code>E = 1 / (1 + 10^((eloB − eloA)/400))</code>. Un <em>Match</em> es una transacción exitosa (ambos nodos ganan); un <em>Dislike</em> es un timeout — el nodo con Elo más bajo asume la pérdida completa mientras el de Elo alto solo pierde 30%. Cuando un nodo de alta prioridad se encuentra con uno de baja, el factor K escala exponencialmente (<code>K = 32 · (1 + brecha/400)^1.4</code>, con tope de 128). Un balanceador mezcla selección por mérito y uniforme (peso&nbsp;0.6) para que ningún supernodo monopolice el tráfico, y la <em>entropía del sistema</em> mide qué tan repartida está la masa de Elo.",
-          eloRunning: "Simulación en marcha — mira cómo se forman los niveles 🛡️",
-          eloPaused: "En pausa — el clúster contiene la respiración…",
-          eloResetDone: "Clúster reiniciado — 50 nodos nuevos en Elo 1500.",
-          eloMatch: "Match",
-          eloDislike: "Dislike",
+          eloColNode: "Soltero",
+          eloColElo: "Popularidad",
+          eloColMatches: "Citas buenas",
+          eloColDislikes: "Citas malas",
+          eloEntropyTitle: "Medidor de justicia — ¿quién recibe la atención?",
+          eloStatEntropy: "Justicia",
+          eloStatTicks: "Encuentros",
+          eloLogTitle: "Chismes en vivo",
+          eloFormulaHtml: "<strong style=\"color: var(--gold)\">Cómo funciona el hechizo (versión amable):</strong> todos empiezan con la misma puntuación de popularidad (1500). Cuando dos solteros se conocen, la puntuación se mueve como en el ajedrez: una <em>cita buena</em> les sube a ambos, mientras que una <em>cita mala</em> duele — y le duele mucho más al menos popular (el popular se quita el 70% del disgusto). Las sorpresas grandes mueven las puntuaciones al máximo: si un tapado conquista a una superestrella, su puntuación se dispara. Y hay un casamentero en el fondo que evita que los populares acaparen toda la atención — mezcla las cosas a propósito para que todos tengan su oportunidad de conocer gente. El <em>medidor de justicia</em> muestra qué tan repartida está la atención: barra llena = todos reciben algo de cariño. Para los curiosos, la receta exacta es la fórmula Elo clásica <code>E = 1 / (1 + 10^((eloB − eloA)/400))</code> con bonus por sorpresa <code>K = 32 · (1 + brecha/400)^1.4</code> (tope de 128) y un casamentero que mezcla emparejamiento por mérito y al azar (peso&nbsp;0.6).",
+          eloRunning: "La escena de citas está que arde — mira cómo se forma el clan popular 🛡️",
+          eloPaused: "En pausa — todos están recuperando el aliento…",
+          eloResetDone: "Empezamos de cero — 50 solteros, todos igual de (im)populares.",
+          eloMatch: "Cita buena",
+          eloDislike: "Cita mala",
           card3LinkAria: "Abrir el Juego de la Popularidad interactivo",
           svgIdleAria: "Brújula en reposo: al menos un vector de perfil está vacío.",
           matchLine: "💘 MATCH INMINENTE",
@@ -2200,6 +2204,15 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           return '<span class="' + (d >= 0 ? "up" : "down") + '">' + txt + "</span>";
         }
 
+        // Friendly names so the leaderboard reads like people, not servers.
+        var NAMES = ["Alex", "Bella", "Carlos", "Dana", "Eli", "Fiona", "Gus", "Hana",
+          "Ivan", "Julia", "Kai", "Lena", "Marco", "Nina", "Omar", "Paula", "Quinn",
+          "Rosa", "Sam", "Tessa", "Uma", "Viktor", "Wanda", "Xavi", "Yara", "Zoe",
+          "Bruno", "Cleo", "Diego", "Elsa", "Felipe", "Greta", "Hugo", "Iris",
+          "Joel", "Katia", "Leo", "Mia", "Nico", "Olga", "Pablo", "Renata",
+          "Sofia", "Tomas", "Ursula", "Vera", "Walter", "Ximena", "Yusuf", "Coco"];
+        function nodeName(id) { return NAMES[id % NAMES.length]; }
+
         function render() {
           // Top 10 table
           var sorted = nodes.slice().sort(function (x, y) { return y.elo - x.elo; }).slice(0, 10);
@@ -2208,7 +2221,7 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
             var peak = nd.elo >= 1800 ? ' class="peak"' : "";
             html += "<tr" + peak + ">" +
               '<td class="rank">' + (i + 1) + "</td>" +
-              "<td>node_" + nd.id + "</td>" +
+              "<td>" + nodeName(nd.id) + "</td>" +
               '<td class="num elo">' + nd.elo.toFixed(1) + "</td>" +
               '<td class="num">' + nd.matches + "</td>" +
               '<td class="num">' + nd.dislikes + "</td>" +
@@ -2227,7 +2240,7 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           var li = document.createElement("li");
           var who = document.createElement("span");
           who.className = "who";
-          who.textContent = "node_" + entry.a + " ↔ node_" + entry.b;
+          who.textContent = nodeName(entry.a) + " 💞 " + nodeName(entry.b);
           var out = document.createElement("span");
           out.className = entry.outcome === "Match" ? "out-match" : "out-dislike";
           out.textContent = t(entry.outcome === "Match" ? "eloMatch" : "eloDislike");
