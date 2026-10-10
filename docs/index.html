@@ -1577,14 +1577,6 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           tinderIdle: "Drag the card or press Like / Pass to start swiping.",
           tinderSwipeHint: "← pass · like →",
           tinderFormulaHtml: "<strong style=\"color: var(--gold)\">How the spell works:</strong> every profile has an Elo score — the app's estimate of how desirable they are. When you like someone, the app computes your win probability <code>E = 1 / (1 + 10^((theirElo − yourElo)/400))</code>: that's the chance they swipe back. Match → both scores rise, but beating someone above your league pays far more (upset bonus <code>K = 32 · (1 + gap/400)^1.4</code>). Rejected → your score drops, and theirs climbs a little, because being wanted (and choosing) is itself a signal. Passing withholds attention, which slowly deflates the passed-on profile. This is the same rating loop as <code>elo_ranking_sim.py</code> — except here <em>you</em> are one of the nodes.",
-          tinderBio1: "Salsa on Fridays, spreadsheets on Sundays.",
-          tinderBio2: "Will judge your coffee order. Kindly.",
-          tinderBio3: "6 photos of my dog, 1 of me.",
-          tinderBio4: "Fluent in sarcasm and Python.",
-          tinderBio5: "Looking for a gym partner (I'll watch).",
-          tinderBio6: "Asunción skyline > sunsets anywhere.",
-          tinderBio7: "My love language is memes.",
-          tinderBio8: "Ask me about my sourdough.",
           card3LinkAria: "Open the interactive Popularity Game",
           svgIdleAria: "Compass idle: at least one profile vector is empty.",
           matchLine: "💘 IMMINENT MATCH",
@@ -1702,14 +1694,6 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           tinderIdle: "Arrastra la tarjeta o pulsa Like / Pasar para empezar.",
           tinderSwipeHint: "← pasar · like →",
           tinderFormulaHtml: "<strong style=\"color: var(--gold)\">Cómo funciona el hechizo:</strong> cada perfil tiene una puntuación Elo — la estimación de la app sobre cuán deseable es. Cuando le das like a alguien, la app calcula tu probabilidad de «victoria» <code>E = 1 / (1 + 10^((suElo − tuElo)/400))</code>: la probabilidad de que te corresponda. Match → ambas puntuaciones suben, pero conquistar a alguien por encima de tu liga paga mucho más (bonus por sorpresa <code>K = 32 · (1 + brecha/400)^1.4</code>). Rechazo → tu puntuación baja y la suya sube un poco, porque ser deseado (y elegir) también es una señal. Pasar retiene atención, lo que desinfla lentamente al perfil rechazado. Es el mismo bucle de puntuaciones que <code>elo_ranking_sim.py</code> — solo que aquí <em>tú</em> eres uno de los nodos.",
-          tinderBio1: "Salsa los viernes, planillas los domingos.",
-          tinderBio2: "Juzgaré tu pedido de café. Con cariño.",
-          tinderBio3: "6 fotos de mi perro, 1 mía.",
-          tinderBio4: "Fluido en sarcasmo y Python.",
-          tinderBio5: "Busco compañero de gimnasio (yo miro).",
-          tinderBio6: "El skyline de Asunción > cualquier atardecer.",
-          tinderBio7: "Mi idioma del amor son los memes.",
-          tinderBio8: "Pregúntame por mi pan de masa madre.",
           card3LinkAria: "Abrir el Juego de la Popularidad interactivo",
           svgIdleAria: "Brújula en reposo: al menos un vector de perfil está vacío.",
           matchLine: "💘 MATCH INMINENTE",
@@ -2588,16 +2572,111 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
         var LOG_ENTRIES = 8;
         var SWIPE_THRESHOLD = 90;
 
+        // 100 profiles. Bios are inline bilingual objects ({en, es}) so the
+        // deck stays self-contained without 200 i18n dictionary keys.
         var PROFILES = [
-          { name: "Valentina", emoji: "💃", elo: 1680, bio: "tinderBio1" },
-          { name: "Camila",    emoji: "☕", elo: 1560, bio: "tinderBio2" },
-          { name: "Bruno",     emoji: "🐶", elo: 1440, bio: "tinderBio3" },
-          { name: "Diego",     emoji: "🐍", elo: 1620, bio: "tinderBio4" },
-          { name: "Sofia",     emoji: "🏋️", elo: 1380, bio: "tinderBio5" },
-          { name: "Mateo",     emoji: "🌇", elo: 1520, bio: "tinderBio6" },
-          { name: "Lucia",     emoji: "😂", elo: 1470, bio: "tinderBio7" },
-          { name: "Hugo",      emoji: "🍞", elo: 1590, bio: "tinderBio8" }
+          { name: "Valentina", emoji: "💃", elo: 1680, bio: { en: "Salsa on Fridays, spreadsheets on Sundays.", es: "Salsa los viernes, planillas los domingos." } },
+          { name: "Camila", emoji: "☕", elo: 1560, bio: { en: "Will judge your coffee order. Kindly.", es: "Juzgaré tu pedido de café. Con cariño." } },
+          { name: "Bruno", emoji: "🐶", elo: 1440, bio: { en: "6 photos of my dog, 1 of me.", es: "6 fotos de mi perro, 1 mía." } },
+          { name: "Diego", emoji: "🐍", elo: 1620, bio: { en: "Fluent in sarcasm and Python.", es: "Fluido en sarcasmo y Python." } },
+          { name: "Sofia", emoji: "🏋️", elo: 1380, bio: { en: "Looking for a gym partner (I'll watch).", es: "Busco compañero de gimnasio (yo miro)." } },
+          { name: "Mateo", emoji: "🌇", elo: 1520, bio: { en: "Asunción skyline > sunsets anywhere.", es: "El skyline de Asunción > cualquier atardecer." } },
+          { name: "Lucia", emoji: "😂", elo: 1470, bio: { en: "My love language is memes.", es: "Mi idioma del amor son los memes." } },
+          { name: "Hugo", emoji: "🍞", elo: 1590, bio: { en: "Ask me about my sourdough.", es: "Pregúntame por mi pan de masa madre." } },
+          { name: "Martina", emoji: "🎸", elo: 1610, bio: { en: "Guitar in one hand, tereré in the other.", es: "Guitarra en una mano, tereré en la otra." } },
+          { name: "Emma", emoji: "🌱", elo: 1390, bio: { en: "My plants are alive. My love life, TBD.", es: "Mis plantas están vivas. Mi amor, ya veremos." } },
+          { name: "Valeria", emoji: "🎨", elo: 1540, bio: { en: "I'll paint you like one of my French canvases.", es: "Te pintaré como uno de mis lienzos franceses." } },
+          { name: "Renata", emoji: "📚", elo: 1480, bio: { en: "Currently reading two books. Dating zero.", es: "Leyendo dos libros. Citando a cero." } },
+          { name: "Julieta", emoji: "🍰", elo: 1630, bio: { en: "I bake when I'm nervous. I'm always nervous.", es: "Horneo cuando estoy nerviosa. Siempre estoy nerviosa." } },
+          { name: "Isabella", emoji: "🩰", elo: 1660, bio: { en: "Ballet by day, telenovela critic by night.", es: "Ballet de día, crítica de telenovelas de noche." } },
+          { name: "Daniela", emoji: "🎮", elo: 1450, bio: { en: "I'll carry you in ranked. Emotionally too.", es: "Te cargo en ranked. Emocionalmente también." } },
+          { name: "Gabriela", emoji: "🔬", elo: 1570, bio: { en: "Chemist. I know what's in your cologne.", es: "Química. Sé qué tiene tu colonia." } },
+          { name: "Catalina", emoji: "🌊", elo: 1500, bio: { en: "Ocean child. Sand included in the deal.", es: "Hija del mar. La arena viene incluida." } },
+          { name: "Ximena", emoji: "🎷", elo: 1420, bio: { en: "Jazz tunes and questionable karaoke choices.", es: "Jazz y decisiones dudosas en el karaoke." } },
+          { name: "Antonella", emoji: "🐈", elo: 1580, bio: { en: "My cat approves of almost nobody.", es: "Mi gato casi no aprueba a nadie." } },
+          { name: "Regina", emoji: "👑", elo: 1690, bio: { en: "Yes, my name means queen. Coincidence?", es: "Sí, mi nombre significa reina. ¿Casualidad?" } },
+          { name: "Emilia", emoji: "✈️", elo: 1530, bio: { en: "Ask me about the airport story.", es: "Pregúntame por la historia del aeropuerto." } },
+          { name: "Alondra", emoji: "🎤", elo: 1400, bio: { en: "Karaoke queen. No duets, I sing alone.", es: "Reina del karaoke. Sin dúos, canto sola." } },
+          { name: "Fernanda", emoji: "🍜", elo: 1490, bio: { en: "Ramen is my other love language.", es: "El ramen es mi otro idioma del amor." } },
+          { name: "Jimena", emoji: "🚴", elo: 1460, bio: { en: "I bike everywhere. Yes, to your place too.", es: "Voy en bici a todos lados. También a tu casa." } },
+          { name: "Bianca", emoji: "♟️", elo: 1600, bio: { en: "Chess club captain. I see your move already.", es: "Capitana de ajedrez. Ya vi tu jugada." } },
+          { name: "Carla", emoji: "🍷", elo: 1510, bio: { en: "Wine tastings are basically speed dating.", es: "Las catas de vino son citas veloces." } },
+          { name: "Elena", emoji: "🌙", elo: 1430, bio: { en: "Night owl with strong opinions about stars.", es: "Búho nocturno con opiniones fuertes sobre estrellas." } },
+          { name: "Nora", emoji: "🧶", elo: 1370, bio: { en: "Knitting you a scarf. We just met. Bold.", es: "Te estoy tejiendo una bufanda. Recién nos conocemos." } },
+          { name: "Paula", emoji: "📸", elo: 1550, bio: { en: "Film photography. Yes, I still say 'hold on'.", es: "Fotografía analógica. Sí, digo 'aguantá'." } },
+          { name: "Silvia", emoji: "🌻", elo: 1410, bio: { en: "Sunflower farmer's daughter. Free seeds.", es: "Hija de productor de girasoles. Semillas gratis." } },
+          { name: "Teresa", emoji: "🎭", elo: 1590, bio: { en: "Theater kid energy, tax-paying adult energy.", es: "Energía de teatro, energía de pagar impuestos." } },
+          { name: "Veronica", emoji: "💻", elo: 1620, bio: { en: "I debug for a living. I'll debug you too.", es: "Depuro código por vida. También te depuro a ti." } },
+          { name: "Amanda", emoji: "🍕", elo: 1360, bio: { en: "Pineapple on pizza is a dealbreaker. Sorry.", es: "Piña en la pizza es un dealbreaker. Perdón." } },
+          { name: "Belen", emoji: "🕯️", elo: 1490, bio: { en: "Candle maker. My apartment smells amazing.", es: "Hago velas. Mi depto huele increíble." } },
+          { name: "Clara", emoji: "🎿", elo: 1580, bio: { en: "Ski season is the only season.", es: "La temporada de ski es la única temporada." } },
+          { name: "Elisa", emoji: "🐎", elo: 1470, bio: { en: "Horse girl. It's not a phase.", es: "Chica de caballos. No es una fase." } },
+          { name: "Fabiola", emoji: "🥁", elo: 1440, bio: { en: "Drummer. Neighbors love me (they lie).", es: "Baterista. Mis vecinos me adoran (mienten)." } },
+          { name: "Gloria", emoji: "🏺", elo: 1520, bio: { en: "Museum dates are underrated. Fight me.", es: "Las citas en museos son infravaloradas. A ver." } },
+          { name: "Ines", emoji: "🐝", elo: 1380, bio: { en: "Beekeeper. Yes, I have honey. It's great.", es: "Apicultora. Sí, tengo miel. Es riquísima." } },
+          { name: "Leila", emoji: "🧿", elo: 1560, bio: { en: "Superstition level: professional.", es: "Nivel de superstición: profesional." } },
+          { name: "Marisol", emoji: "🏖️", elo: 1450, bio: { en: "Beach body is a beach and my body.", es: "Cuerpo de playa es una playa y mi cuerpo." } },
+          { name: "Noelia", emoji: "🎲", elo: 1500, bio: { en: "Board games on the first date. Risky.", es: "Juegos de mesa en la primera cita. Arriesgado." } },
+          { name: "Olivia", emoji: "🐙", elo: 1540, bio: { en: "Octopus facts daily. You've been warned.", es: "Datos de pulpos a diario. Estás advertido." } },
+          { name: "Paloma", emoji: "🕊️", elo: 1480, bio: { en: "Peaceful until someone cuts the line.", es: "Tranquila hasta que alguien se cuela." } },
+          { name: "Rocio", emoji: "💧", elo: 1390, bio: { en: "Rain sounds > any playlist.", es: "Sonidos de lluvia > cualquier playlist." } },
+          { name: "Sara", emoji: "🎯", elo: 1610, bio: { en: "Extremely competitive at mini golf.", es: "Súper competitiva en el minigolf." } },
+          { name: "Tamara", emoji: "🍫", elo: 1460, bio: { en: "I make chocolate. You want to know me.", es: "Hago chocolate. Quieres conocerme." } },
+          { name: "Violeta", emoji: "🌷", elo: 1570, bio: { en: "Florist. Free relationship advice with roses.", es: "Florista. Consejos gratis con las rosas." } },
+          { name: "Yolanda", emoji: "🧳", elo: 1440, bio: { en: "Always packed. Ask me where I'm going.", es: "Maleta siempre lista. Pregúntame a dónde voy." } },
+          { name: "Abril", emoji: "🌦️", elo: 1470, bio: { en: "Named after a month, energy of all twelve.", es: "Nací en un mes, energía de los doce." } },
+          { name: "Cayetana", emoji: "🐩", elo: 1650, bio: { en: "My poodle has better hair than both of us.", es: "Mi caniche tiene mejor pelo que nosotros dos." } },
+          { name: "Dolores", emoji: "🎹", elo: 1420, bio: { en: "Piano teacher. I can tell if you practiced.", es: "Profesora de piano. Sé si practicaste." } },
+          { name: "Esperanza", emoji: "🌈", elo: 1500, bio: { en: "Hopeful romantic, realistic about laundry.", es: "Romántica esperanzada, realista con el lavado." } },
+          { name: "Florencia", emoji: "🌸", elo: 1590, bio: { en: "My balcony is a botanical garden now.", es: "Mi balcón ya es un jardín botánico." } },
+          { name: "Santiago", emoji: "⚽", elo: 1650, bio: { en: "I have opinions about offside. Many.", es: "Tengo opiniones sobre el offside. Muchas." } },
+          { name: "Matias", emoji: "🍳", elo: 1480, bio: { en: "I make one (1) perfect omelette.", es: "Hago una (1) tortilla perfecta." } },
+          { name: "Nicolas", emoji: "🎧", elo: 1560, bio: { en: "My playlist will change your life.", es: "Mi playlist te va a cambiar la vida." } },
+          { name: "Sebastian", emoji: "🏄", elo: 1620, bio: { en: "Surf, sun, and suspiciously good hair.", es: "Surf, sol y pelo sospechosamente bueno." } },
+          { name: "Alejandro", emoji: "🕺", elo: 1680, bio: { en: "Dance floor: undefeated since 2019.", es: "Pista de baile: invicto desde 2019." } },
+          { name: "Miguel", emoji: "📷", elo: 1450, bio: { en: "I photograph strangers' dogs. Sorry.", es: "Fotografío perros ajenos. Perdón." } },
+          { name: "Andres", emoji: "🚀", elo: 1530, bio: { en: "Rocket engineer. Great at small talk.", es: "Ingeniero aeroespacial. Genial charlando." } },
+          { name: "Juan", emoji: "🧉", elo: 1400, bio: { en: "Mate before coffee. Fight me.", es: "Mate antes del café. Discutamos." } },
+          { name: "Pablo", emoji: "🎬", elo: 1580, bio: { en: "I quote movies nobody has seen.", es: "Cito películas que nadie vio." } },
+          { name: "Luis", emoji: "🚗", elo: 1370, bio: { en: "I'll pick you up. I'm always early.", es: "Paso por ti. Siempre llego temprano." } },
+          { name: "Carlos", emoji: "🎺", elo: 1490, bio: { en: "Trumpet at 7am. The neighbors know.", es: "Trompeta a las 7am. Los vecinos ya saben." } },
+          { name: "Javier", emoji: "🧗", elo: 1610, bio: { en: "Climbing gym daily. Grip strength: yes.", es: "Rocódromo a diario. Fuerza de agarre: sí." } },
+          { name: "Adrian", emoji: "🐢", elo: 1430, bio: { en: "Slow and steady wins your heart.", es: "Lento y constante gana tu corazón." } },
+          { name: "Alvaro", emoji: "📖", elo: 1540, bio: { en: "I'll lend you my favorite book. Carefully.", es: "Te presto mi libro favorito. Con cuidado." } },
+          { name: "Cristian", emoji: "🏀", elo: 1510, bio: { en: "Left-handed. Confusing at basketball.", es: "Zurdo. Confuso en el básquet." } },
+          { name: "Dario", emoji: "🍺", elo: 1460, bio: { en: "Homebrewer. Some batches are great.", es: "Cerveza artesanal. Algunas tandas son buenas." } },
+          { name: "Emilio", emoji: "🐦", elo: 1380, bio: { en: "I know every bird in the park by name.", es: "Conozco cada pájaro del parque por nombre." } },
+          { name: "Facundo", emoji: "🥩", elo: 1630, bio: { en: "I grill. That's the whole bio.", es: "Hago asado. Ese es todo el perfil." } },
+          { name: "Gael", emoji: "🐉", elo: 1470, bio: { en: "D&D night is sacred. You're invited.", es: "La noche de D&D es sagrada. Estás invitado." } },
+          { name: "Hernan", emoji: "📻", elo: 1350, bio: { en: "I fix old radios. They sound better.", es: "Reparo radios viejas. Suenan mejor." } },
+          { name: "Ivan", emoji: "🧊", elo: 1520, bio: { en: "Cold plunge enthusiast. It's a lifestyle.", es: "Fanático de los baños fríos. Es un estilo." } },
+          { name: "Joaquin", emoji: "🎻", elo: 1590, bio: { en: "Violinist. Romantic by profession.", es: "Violinista. Romántico por profesión." } },
+          { name: "Lorenzo", emoji: "🍝", elo: 1550, bio: { en: "Nonna's recipes, nonna's standards.", es: "Recetas de la nona, estándares de la nona." } },
+          { name: "Manuel", emoji: "🪴", elo: 1410, bio: { en: "I talk to my plants. They like me.", es: "Les hablo a mis plantas. Les caigo bien." } },
+          { name: "Octavio", emoji: "🏛️", elo: 1480, bio: { en: "History nerd. First date: museum gift shop.", es: "Nerd de historia. Primera cita: museo." } },
+          { name: "Pedro", emoji: "🌮", elo: 1560, bio: { en: "Taco Tuesdays are non-negotiable.", es: "Los martes de tacos no se negocian." } },
+          { name: "Ramiro", emoji: "🚤", elo: 1440, bio: { en: "Water ski instructor. Lake house included.", es: "Instructor de ski acuático. Casa en el lago." } },
+          { name: "Salvador", emoji: "🐟", elo: 1390, bio: { en: "Fishing at dawn. Patience is my superpower.", es: "Pesca al alba. La paciencia es mi superpoder." } },
+          { name: "Tomas", emoji: "🕹️", elo: 1500, bio: { en: "Speedrunner. I finish everything fast.", es: "Speedrunner. Termino todo rápido." } },
+          { name: "Vicente", emoji: "🪁", elo: 1360, bio: { en: "I fly kites. It's cooler than it sounds.", es: "Vuelo cometas. Es más cool de lo que suena." } },
+          { name: "Xavier", emoji: "🧠", elo: 1640, bio: { en: "Trivia night MVP. Marry me at round 7.", es: "MVP de las trivias. Cásate conmigo en la ronda 7." } },
+          { name: "Rodrigo", emoji: "🐴", elo: 1470, bio: { en: "Country boy, city job, excellent playlists.", es: "Chico de campo, trabajo en la ciudad, buenas playlists." } },
+          { name: "Simon", emoji: "🍸", elo: 1580, bio: { en: "Bartender. Your drink tells me your story.", es: "Bartender. Tu trago me cuenta tu historia." } },
+          { name: "Thiago", emoji: "⚡", elo: 1540, bio: { en: "Fast walker. Please keep up.", es: "Camino rápido. Por favor, sigue el ritmo." } },
+          { name: "Agustin", emoji: "🏈", elo: 1490, bio: { en: "I'll explain the rules. You'll fall asleep.", es: "Te explico las reglas. Te vas a dormir." } },
+          { name: "Benjamin", emoji: "🐕", elo: 1520, bio: { en: "My dog is my wingman. He's good.", es: "Mi perro es mi copiloto. Es bueno." } },
+          { name: "Dante", emoji: "🖋️", elo: 1610, bio: { en: "I write poems. Short ones. Like this.", es: "Escribo poemas. Cortos. Como este." } },
+          { name: "Esteban", emoji: "🍋", elo: 1430, bio: { en: "My lemon tree is my personality.", es: "Mi limonero es mi personalidad." } },
+          { name: "Felix", emoji: "🎪", elo: 1460, bio: { en: "Juggler at parties. Unemployed at home.", es: "Malabares en fiestas. En casa, desempleado." } },
+          { name: "Gonzalo", emoji: "🏔️", elo: 1600, bio: { en: "Summited it twice. Ask me anything.", es: "Lo cumbé dos veces. Pregúntame lo que sea." } },
+          { name: "Ignacio", emoji: "🍤", elo: 1550, bio: { en: "I'll cook. You do dishes. Fair deal.", es: "Yo cocino. Tú lavas. Trato justo." } },
+          { name: "Julian", emoji: "🪩", elo: 1660, bio: { en: "Disco ball in the living room. Non-negotiable.", es: "Bola disco en el living. No se negocia." } },
+          { name: "Kevin", emoji: "🛹", elo: 1480, bio: { en: "Skate to work. Fall occasionally.", es: "Voy en skate al trabajo. A veces me caigo." } },
+          { name: "Lucas", emoji: "🧩", elo: 1530, bio: { en: "Puzzle champion of my living room.", es: "Campeón de puzzles de mi living." } },
+          { name: "Franco", emoji: "🥊", elo: 1450, bio: { en: "Boxing at dawn, croissants at noon.", es: "Boxeo al alba, medialunas al mediodía." } },
+          { name: "Rafael", emoji: "🪘", elo: 1420, bio: { en: "Drum circles on the beach. Bring snacks.", es: "Tambores en la playa. Traé algo de picar." } }
         ];
+        var INITIAL_ELOS = PROFILES.map(function (p) { return p.elo; });
 
         var you = { elo: INITIAL_YOU };
         var deck = [];
@@ -2607,6 +2686,12 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
 
         function expected(eloA, eloB) {
           return 1.0 / (1.0 + Math.pow(10.0, (eloB - eloA) / 400.0));
+        }
+        // Bios are inline {en, es} objects; fall back to i18n keys for safety.
+        function bioText(p) {
+          var b = p.bio;
+          if (b && typeof b === "object") { return b[LANG] || b.en || ""; }
+          return t(b);
         }
         function kFactor(gap) {
           return Math.min(K_BASE * Math.pow(1.0 + Math.abs(gap) / 400.0, K_EXP), K_MAX);
@@ -2654,23 +2739,37 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
         }
 
         // --- leaderboard with FLIP reorder animation ---
+        // With 100 profiles we only render the top 10; "You" is appended
+        // with its real rank when it sits outside the top 10.
+        var BOARD_CAP = 10;
+        function rowHtml(p, rank, pct) {
+          return '<li' + (rank === 0 ? ' class="top"' : "") + ">" +
+            '<span class="rk">' + (rank + 1) + "</span>" +
+            '<span class="nm">' + p.emoji + " " + p.name +
+              '<span class="bar"><span class="fill" style="width:' + pct.toFixed(0) + '%"></span></span>' +
+            "</span>" +
+            '<span class="sc">' + Math.round(p.elo) + "</span>" +
+            "</li>";
+        }
         function renderBoard() {
           var everyone = PROFILES.slice();
-          everyone.push({ name: "You", emoji: "🧙‍♀️", elo: you.elo, isYou: true });
+          var youRow = { name: "You", emoji: "🧙‍♀️", elo: you.elo, isYou: true };
+          everyone.push(youRow);
           everyone.sort(function (a, b) { return b.elo - a.elo; });
 
           var lo = minElo(), hi = maxElo(), span = Math.max(1, hi - lo);
+          var cap = Math.min(everyone.length, BOARD_CAP);
           var html = "";
-          everyone.forEach(function (p, i) {
+          for (var i = 0; i < cap; i++) {
+            var p = everyone[i];
             var pct = 12 + 88 * (p.elo - lo) / span;
-            html += '<li' + (i === 0 ? ' class="top"' : "") + ">" +
-              '<span class="rk">' + (i + 1) + "</span>" +
-              '<span class="nm">' + p.emoji + " " + p.name +
-                '<span class="bar"><span class="fill" style="width:' + pct.toFixed(0) + '%"></span></span>' +
-              "</span>" +
-              '<span class="sc">' + Math.round(p.elo) + "</span>" +
-              "</li>";
-          });
+            html += rowHtml(p, i, pct);
+          }
+          var youRank = everyone.indexOf(youRow);
+          if (youRank >= cap) {
+            var pctYou = 12 + 88 * (youRow.elo - lo) / span;
+            html += rowHtml(youRow, youRank, pctYou);
+          }
           boardEl.innerHTML = html;
         }
 
@@ -2725,7 +2824,7 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
             '<span class="tinder-stamp nope" aria-hidden="true">NOPE</span>' +
             '<span class="avatar" aria-hidden="true">' + profile.emoji + "</span>" +
             "<h3>" + profile.name + "</h3>" +
-            '<p class="bio">' + t(profile.bio) + "</p>" +
+            '<p class="bio">' + bioText(profile) + "</p>" +
             '<span class="elo-badge">Elo ' + Math.round(profile.elo) + "</span>" +
             '<span class="league" aria-hidden="true"><span class="fill" style="width:' + pct.toFixed(0) + '%"></span></span>';
           if (depth === 0) { attachDrag(card, profile); }
@@ -2863,7 +2962,7 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           you.elo = INITIAL_YOU;
           displayElo = INITIAL_YOU;
           youEloEl.textContent = String(INITIAL_YOU);
-          PROFILES.forEach(function (p, i) { p.elo = [1680, 1560, 1440, 1620, 1380, 1520, 1470, 1590][i]; });
+          PROFILES.forEach(function (p, i) { p.elo = INITIAL_ELOS[i]; });
           refillDeck();
           renderDeck();
           renderBoard();
