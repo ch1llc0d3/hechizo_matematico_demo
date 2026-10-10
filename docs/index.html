@@ -242,6 +242,7 @@
     .hero .stars {
       position: absolute;
       inset: 0;
+      z-index: 1;
       pointer-events: none;
       background-image:
         radial-gradient(1.5px 1.5px at 12% 30%, var(--star), transparent),
@@ -252,6 +253,22 @@
         radial-gradient(1px 1px at 45% 85%, var(--star-soft), transparent),
         radial-gradient(1px 1px at 8% 80%, var(--star-soft), transparent),
         radial-gradient(1.5px 1.5px at 92% 78%, var(--star), transparent);
+    }
+
+    /* ---------- Hero 3D layer (three.js, decorative only) ---------- */
+    /* The canvas is created by JS only when WebGL is available, so no-JS and
+       no-WebGL visitors see the plain gradient hero exactly as before. */
+    .hero-3d {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-3d canvas { display: block; width: 100%; height: 100%; }
+
+    .hero .wrap {
+      position: relative;
+      z-index: 2;
     }
 
     /* ---------- Sections ---------- */
@@ -1108,6 +1125,7 @@
   </div>
 
   <header class="hero">
+    <div class="hero-3d" id="hero-3d" aria-hidden="true"></div>
     <div class="stars" aria-hidden="true"></div>
     <div class="wrap">
       <h1 data-i18n="h1">Digital Wizard&rsquo;s Toolkit 🐙💻🔮</h1>
@@ -3408,6 +3426,249 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
 
       applyI18n();
       update();
+    })();
+  </script>
+
+  <!-- ============ Hero 3D layer (three.js, vendored locally — no CDN) ============ -->
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js" } }
+  </script>
+  <script type="module">
+    /* Decorative 3D "spell circle" behind the hero. Pure progressive
+       enhancement: if WebGL is missing, the module fails, or the visitor
+       prefers reduced motion, the page is unchanged. */
+    (async function () {
+      "use strict";
+
+      var host = document.getElementById("hero-3d");
+      if (!host) { return; }
+
+      var REDUCED = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Feature-detect WebGL before importing three (cheap, no side effects).
+      var probe = document.createElement("canvas");
+      var gl = probe.getContext("webgl2") || probe.getContext("webgl");
+      if (!gl) { return; }
+
+      var THREE;
+      try {
+        THREE = await import("three");
+      } catch (err) {
+        return; // vendored module unavailable — keep the plain hero
+      }
+
+      var hero = host.closest(".hero");
+      var renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
+      } catch (err) {
+        return;
+      }
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      host.appendChild(renderer.domElement);
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 60);
+      camera.position.set(0, 0, 5.2);
+
+      /* ---- theme-aware colors, read from the page's CSS variables ---- */
+      function cssColor(name, fallback) {
+        var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fallback;
+      }
+      var palette = {
+        cyan: new THREE.Color(cssColor("--cyan", "#00ffc8")),
+        magenta: new THREE.Color(cssColor("--magenta", "#ff6af6")),
+        gold: new THREE.Color(cssColor("--gold", "#ffd166"))
+      };
+
+      /* ---- the spell core: a wireframe torus knot + inner icosahedron ---- */
+      var core = new THREE.Group();
+
+      var knotGeo = new THREE.TorusKnotGeometry(1.05, 0.32, 140, 20, 2, 3);
+      var knot = new THREE.LineSegments(
+        new THREE.EdgesGeometry(knotGeo, 12),
+        new THREE.LineBasicMaterial({ color: palette.cyan, transparent: true, opacity: 0.42 })
+      );
+      core.add(knot);
+
+      var innerGeo = new THREE.IcosahedronGeometry(0.62, 1);
+      var inner = new THREE.LineSegments(
+        new THREE.EdgesGeometry(innerGeo),
+        new THREE.LineBasicMaterial({ color: palette.magenta, transparent: true, opacity: 0.6 })
+      );
+      core.add(inner);
+
+      // a faint golden ring, like a summoning circle
+      var ring = new THREE.LineSegments(
+        new THREE.EdgesGeometry(new THREE.TorusGeometry(1.75, 0.012, 6, 90)),
+        new THREE.LineBasicMaterial({ color: palette.gold, transparent: true, opacity: 0.35 })
+      );
+      ring.rotation.x = Math.PI / 2.4;
+      core.add(ring);
+
+      scene.add(core);
+
+      /* ---- drifting star dust: two additive point clouds ---- */
+      function spriteTexture() {
+        var c = document.createElement("canvas");
+        c.width = c.height = 64;
+        var ctx = c.getContext("2d");
+        var g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+        g.addColorStop(0, "rgba(255,255,255,1)");
+        g.addColorStop(0.35, "rgba(255,255,255,0.55)");
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 64, 64);
+        var tex = new THREE.CanvasTexture(c);
+        tex.needsUpdate = true;
+        return tex;
+      }
+      var sprite = spriteTexture();
+
+      function makeDust(count, color, spread, size) {
+        var pos = new Float32Array(count * 3);
+        var i;
+        for (i = 0; i < count; i++) {
+          pos[i * 3] = (Math.random() * 2 - 1) * spread[0];
+          pos[i * 3 + 1] = (Math.random() * 2 - 1) * spread[1];
+          pos[i * 3 + 2] = (Math.random() * 2 - 1) * spread[2];
+        }
+        var geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        var mat = new THREE.PointsMaterial({
+          color: color, size: size, map: sprite, transparent: true,
+          opacity: 0.7, depthWrite: false, blending: THREE.AdditiveBlending,
+          sizeAttenuation: true
+        });
+        return new THREE.Points(geo, mat);
+      }
+
+      var dustA = makeDust(220, palette.cyan, [7, 4, 4], 0.055);
+      var dustB = makeDust(160, palette.magenta, [8, 4.5, 4], 0.045);
+      scene.add(dustA, dustB);
+
+      /* ---- layout: keep the core on the right on wide screens ---- */
+      function layout() {
+        var w = host.clientWidth || hero.clientWidth || 1;
+        var h = host.clientHeight || hero.clientHeight || 1;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        var wide = camera.aspect > 1.05;
+        if (wide) {
+          // parked right of the headline so text stays readable
+          core.position.set(4.2, 0, 0);
+          core.scale.setScalar(0.68);
+          knot.material.opacity = 0.35;
+          inner.material.opacity = 0.45;
+          ring.material.opacity = 0.28;
+        } else {
+          // narrow: small, faint, centered — a decorative watermark
+          core.position.set(0, 0.5, 0);
+          core.scale.setScalar(0.55);
+          knot.material.opacity = 0.22;
+          inner.material.opacity = 0.3;
+          ring.material.opacity = 0.18;
+        }
+      }
+      layout();
+      if (typeof ResizeObserver !== "undefined") {
+        new ResizeObserver(layout).observe(host);
+      } else {
+        window.addEventListener("resize", layout);
+      }
+
+      /* ---- theme switching: recolor materials when data-theme changes ---- */
+      function applyThemeColors() {
+        palette.cyan.set(cssColor("--cyan", "#00ffc8"));
+        palette.magenta.set(cssColor("--magenta", "#ff6af6"));
+        palette.gold.set(cssColor("--gold", "#ffd166"));
+        knot.material.color.copy(palette.cyan);
+        inner.material.color.copy(palette.magenta);
+        ring.material.color.copy(palette.gold);
+        dustA.material.color.copy(palette.cyan);
+        dustB.material.color.copy(palette.magenta);
+      }
+      if (typeof MutationObserver !== "undefined") {
+        new MutationObserver(applyThemeColors).observe(document.documentElement, {
+          attributes: true, attributeFilter: ["data-theme"]
+        });
+      }
+
+      /* ---- pointer parallax (desktop, motion allowed only) ---- */
+      var parallax = { x: 0, y: 0, tx: 0, ty: 0, active: false };
+      if (!REDUCED && window.matchMedia && !window.matchMedia("(pointer: coarse)").matches) {
+        parallax.active = true;
+        window.addEventListener("pointermove", function (e) {
+          parallax.tx = (e.clientX / window.innerWidth - 0.5) * 2;
+          parallax.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+        }, { passive: true });
+      }
+
+      /* ---- render loop, paused when hidden or scrolled away ---- */
+      var visible = true, running = false, rafId = 0;
+      var lastTime = 0;
+
+      function frame(now) {
+        rafId = 0;
+        if (!visible || document.hidden) { running = false; return; }
+        var dt = lastTime ? Math.min((now - lastTime) / 1000, 0.05) : 0.016;
+        lastTime = now;
+        var t = now / 1000;
+
+        knot.rotation.y += dt * 0.22;
+        knot.rotation.x = Math.sin(t * 0.3) * 0.18;
+        inner.rotation.y -= dt * 0.35;
+        inner.rotation.z += dt * 0.12;
+        ring.rotation.z += dt * 0.1;
+        ring.rotation.y = Math.sin(t * 0.25) * 0.25;
+
+        dustA.rotation.y += dt * 0.02;
+        dustB.rotation.y -= dt * 0.015;
+        dustA.position.y = Math.sin(t * 0.4) * 0.12;
+        dustB.position.y = Math.cos(t * 0.33) * 0.1;
+
+        if (parallax.active) {
+          parallax.x += (parallax.tx - parallax.x) * 0.04;
+          parallax.y += (parallax.ty - parallax.y) * 0.04;
+          camera.position.x = parallax.x * 0.45;
+          camera.position.y = -parallax.y * 0.3;
+          camera.lookAt(0, 0, 0);
+        }
+
+        renderer.render(scene, camera);
+        rafId = requestAnimationFrame(frame);
+      }
+
+      function play() {
+        if (running || REDUCED) { return; }
+        running = true;
+        lastTime = 0;
+        rafId = requestAnimationFrame(frame);
+      }
+      function pause() {
+        running = false;
+        if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+      }
+
+      if (typeof IntersectionObserver !== "undefined") {
+        new IntersectionObserver(function (entries) {
+          visible = entries[0].isIntersecting;
+          if (visible) { play(); } else { pause(); }
+        }, { threshold: 0.02 }).observe(hero);
+      }
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) { pause(); } else { play(); }
+      });
+
+      if (REDUCED) {
+        // one calm static frame, no animation
+        renderer.render(scene, camera);
+      } else {
+        play();
+      }
     })();
   </script>
 </body>
