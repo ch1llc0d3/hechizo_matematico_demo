@@ -1,0 +1,58 @@
+# Deploy the static site in docs/ to GitHub Pages.
+#
+# Uses the modern Actions-based deployment (build_type: "workflow").
+# Pages must be enabled with Source = "GitHub Actions":
+#   - Repo Settings → Pages → Source: GitHub Actions, or
+#   - gh api -X POST repos/ch1llc0d3/hechizo_matematico_demo/pages -f build_type=workflow
+#
+# No build step: everything in docs/ is uploaded and served as-is.
+
+name: Deploy docs to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a new push cancels the in-flight one.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Sanity check — site must exist
+        run: |
+          if [ ! -f docs/index.html ]; then
+            echo "::error::docs/index.html not found — nothing to deploy. Did the site get moved?"
+            exit 1
+          fi
+          echo "docs/index.html found ($(wc -c < docs/index.html) bytes) — ready to deploy."
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

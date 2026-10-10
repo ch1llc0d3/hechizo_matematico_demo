@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Digital Wizard&rsquo;s Toolkit — hechizo_matematico</title>
+  <meta name="description" content="A tiny wizard lab for data, vibes, and networks. Three friendly Python spells — cosine-similarity matchmaking, YOLO + EXIF image vibes, and an Elo/SRE dating simulation — plus a live browser version of the Love Compass.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐙</text></svg>">
+  <style>
+    :root {
+      --bg: #050814;
+      --bg-soft: #0a0f22;
+      --ink: #e8ecf4;
+      --ink-dim: #9aa3b5;
+      --cyan: #00ffc8;
+      --magenta: #ff6af6;
+      --gold: #ffd166;
+      --green: #00ff88;
+      --card: rgba(255, 255, 255, 0.035);
+      --card-border: rgba(0, 255, 200, 0.18);
+      --radius: 14px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 72px 0 56px;
+      text-align: center;
+      background:
+        radial-gradient(600px 300px at 20% 0%, rgba(0, 255, 200, 0.12), transparent 60%),
+        radial-gradient(600px 300px at 80% 10%, rgba(255, 106, 246, 0.12), transparent 60%),
+        var(--bg);
+      border-bottom: 1px solid rgba(0, 255, 200, 0.15);
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(1.9rem, 5vw, 3.1rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta) 55%, var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p.tagline {
+      margin: 0 auto 26px;
+      max-width: 640px;
+      color: var(--ink-dim);
+      font-size: 1.08rem;
+    }
+
+    .hero .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 22px;
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      background: rgba(0, 255, 200, 0.06);
+      font-weight: 600;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .hero .cta:hover {
+      background: rgba(0, 255, 200, 0.12);
+      border-color: rgba(0, 255, 200, 0.45);
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .hero .stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1.5px 1.5px at 12% 30%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.35), transparent),
+        radial-gradient(1.5px 1.5px at 55% 20%, rgba(255, 255, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 70% 55%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1.5px 1.5px at 88% 35%, rgba(255, 255, 255, 0.45), transparent),
+        radial-gradient(1px 1px at 45% 85%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 8% 80%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1.5px 1.5px at 92% 78%, rgba(255, 255, 255, 0.4), transparent);
+    }
+
+    /* ---------- Sections ---------- */
+    section { padding: 56px 0 8px; }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: clamp(1.35rem, 3.5vw, 1.8rem);
+      letter-spacing: -0.01em;
+    }
+
+    .section-intro {
+      margin: 0 0 28px;
+      color: var(--ink-dim);
+      max-width: 680px;
+    }
+
+    /* ---------- Spell cards ---------- */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(0, 255, 200, 0.4);
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .card .glyph {
+      font-size: 1.7rem;
+      line-height: 1;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+    }
+
+    .card code {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--gold);
+      background: rgba(255, 209, 102, 0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--ink-dim);
+      font-size: 0.93rem;
+    }
+
+    .card.bonus { border-color: rgba(255, 209, 102, 0.25); }
+    .card.bonus:hover { border-color: rgba(255, 209, 102, 0.5); }
+
+    /* ---------- Compass widget ---------- */
+    .compass-shell {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 26px;
+      align-items: start;
+    }
+
+    .profiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+    }
+
+    .profile {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .profile.a { border-color: rgba(0, 255, 200, 0.35); }
+    .profile.b { border-color: rgba(255, 106, 246, 0.35); }
+
+    .profile h3 {
+      margin: 0 0 4px;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .profile h3 .vec {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--ink-dim);
+      font-weight: 400;
+    }
+
+    .profile .hint {
+      margin: 0 0 12px;
+      font-size: 0.78rem;
+      color: var(--ink-dim);
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 44px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .slider-row label {
+      font-size: 0.85rem;
+      color: var(--ink);
+    }
+    .slider-row output {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ink-dim);
+      text-align: right;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+    .profile.b input[type="range"] { accent-color: var(--magenta); }
+
+    /* ---------- Viz + results ---------- */
+    .viz {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .viz svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      background:
+        radial-gradient(300px 160px at 50% 45%, rgba(0, 255, 200, 0.05), transparent 70%),
+        var(--bg-soft);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+    }
+
+    .results {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stat .k {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-dim);
+      margin-bottom: 2px;
+    }
+    .stat .v {
+      font-family: var(--mono);
+      font-size: 1.15rem;
+      color: var(--ink);
+    }
+
+    .amarre-bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .amarre-bar .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      transition: width 0.25s ease;
+    }
+
+    .status-line {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      min-height: 1.6em;
+      transition: color 0.25s ease;
+    }
+    .status-line.match { color: var(--green); text-shadow: 0 0 18px rgba(0, 255, 136, 0.45); }
+    .status-line.alta { color: var(--magenta); }
+    .status-line.moderada { color: var(--ink-dim); font-weight: 500; }
+
+    .status-sub {
+      margin: 4px 0 0;
+      font-size: 0.82rem;
+      color: var(--ink-dim);
+      min-height: 1.4em;
+    }
+
+    /* ---------- Formula ---------- */
+    .formula {
+      border: 1px dashed rgba(255, 209, 102, 0.35);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      background: rgba(255, 209, 102, 0.04);
+      color: var(--ink-dim);
+      font-size: 0.95rem;
+    }
+    .formula code {
+      font-family: var(--mono);
+      color: var(--gold);
+      font-size: 0.9em;
+    }
+
+    /* ---------- Quick start ---------- */
+    .terminal {
+      background: #02030a;
+      border: 1px solid rgba(0, 255, 200, 0.2);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .terminal .bar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .terminal .bar span {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .terminal .bar span:nth-child(1) { background: #ff5f57; }
+    .terminal .bar span:nth-child(2) { background: #febc2e; }
+    .terminal .bar span:nth-child(3) { background: #28c840; }
+
+    .terminal pre {
+      margin: 0;
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: #c8f6e9;
+    }
+    .terminal pre .c { color: #5f6f88; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      margin-top: 64px;
+      padding: 28px 0 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--ink-dim);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    footer p { margin: 4px 0; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 780px) {
+      .compass-shell { grid-template-columns: 1fr; }
+      .hero { padding: 56px 0 44px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="stars" aria-hidden="true"></div>
+    <div class="wrap">
+      <h1>Digital Wizard&rsquo;s Toolkit 🐙💻🔮</h1>
+      <p class="tagline">A tiny wizard lab for data, vibes, and networks — friendly spells you can run from the terminal, and one you can cast right here in your browser.</p>
+      <a class="cta" href="https://github.com/ch1llc0d3/hechizo_matematico_demo" target="_blank" rel="noopener">
+        ✨ View the spellbook on GitHub
+      </a>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ============ SPELLS ============ -->
+    <section id="spells" aria-labelledby="spells-title">
+      <h2 id="spells-title">The Spells 🔮</h2>
+      <p class="section-intro">Four Python demos that turn matchmaking, images, and popularity into math you can watch.</p>
+
+      <div class="cards">
+        <article class="card">
+          <span class="glyph" aria-hidden="true">💘</span>
+          <h3>Spell 1 — The Love Compass</h3>
+          <code>hechizo_matematico.py</code>
+          <p>Turns two profiles into arrows in 3D space and measures the angle between them with cosine similarity. Smaller angle = more &ldquo;hmm… interesting…&rdquo; A mathematical crush detector.</p>
+        </article>
+
+        <article class="card">
+          <span class="glyph" aria-hidden="true">👁️</span>
+          <h3>Spell 2 — The Digital Eye</h3>
+          <code>sociological_profiler.py</code>
+          <p>YOLO object detection on your webcam or a photo, plus EXIF metadata reading — when, where, which camera. A gossiping crystal ball for images. Educational only.</p>
+        </article>
+
+        <article class="card">
+          <span class="glyph" aria-hidden="true">📈</span>
+          <h3>Spell 3 — The Popularity Game</h3>
+          <code>elo_ranking_sim.py</code>
+          <p>A pretend dating app run like an SRE system: 50 nodes with Elo scores, matches are successful transactions, dislikes are timeouts, and a load balancer keeps super-nodes in check.</p>
+        </article>
+
+        <article class="card bonus">
+          <span class="glyph" aria-hidden="true">🛡️</span>
+          <h3>Bonus Spell — The HA Love Cluster</h3>
+          <code>dating_sre_simulation.py</code>
+          <p>The Popularity Game&rsquo;s sibling: exponential network effects when high-Elo nodes meet low-Elo nodes, traffic-aware load balancing, and a live Tier&nbsp;1 &ldquo;Desirability Peak&rdquo; promotion log.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ INTERACTIVE COMPASS ============ -->
+    <section id="compass" aria-labelledby="compass-title">
+      <h2 id="compass-title">The Love Compass, in your browser 💘</h2>
+      <p class="section-intro">The same math as <code>hechizo_matematico.py</code>, no Python required. Give each profile a direction in the latent space and watch the angle between them respond.</p>
+
+      <div class="compass-shell">
+        <div class="profiles">
+
+          <div class="profile a">
+            <h3>Perfil A <span class="vec" id="vec-a-label">(tech, café, asunción)</span></h3>
+            <p class="hint">Cyan arrow · the first person</p>
+            <div class="slider-row">
+              <label for="a-tech">Tech</label>
+              <input type="range" id="a-tech" min="0" max="1.5" step="0.01" value="1.0">
+              <output for="a-tech" id="a-tech-out">1.00</output>
+            </div>
+            <div class="slider-row">
+              <label for="a-cafe">Café</label>
+              <input type="range" id="a-cafe" min="0" max="1.5" step="0.01" value="0.9">
+              <output for="a-cafe" id="a-cafe-out">0.90</output>
+            </div>
+            <div class="slider-row">
+              <label for="a-asu">Asunción</label>
+              <input type="range" id="a-asu" min="0" max="1.5" step="0.01" value="0.8">
+              <output for="a-asu" id="a-asu-out">0.80</output>
+            </div>
+          </div>
+
+          <div class="profile b">
+            <h3>Perfil B <span class="vec" id="vec-b-label">(tech, café, asunción)</span></h3>
+            <p class="hint">Magenta arrow · the second person</p>
+            <div class="slider-row">
+              <label for="b-tech">Tech</label>
+              <input type="range" id="b-tech" min="0" max="1.5" step="0.01" value="0.95">
+              <output for="b-tech" id="b-tech-out">0.95</output>
+            </div>
+            <div class="slider-row">
+              <label for="b-cafe">Café</label>
+              <input type="range" id="b-cafe" min="0" max="1.5" step="0.01" value="0.85">
+              <output for="b-cafe" id="b-cafe-out">0.85</output>
+            </div>
+            <div class="slider-row">
+              <label for="b-asu">Asunción</label>
+              <input type="range" id="b-asu" min="0" max="1.5" step="0.01" value="0.88">
+              <output for="b-asu" id="b-asu-out">0.88</output>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz">
+          <svg id="compass-svg" viewBox="0 0 340 250" role="img" aria-label="Compass showing the angle between the two profile vectors">
+            <!-- faint compass grid -->
+            <g stroke="rgba(255,255,255,0.06)" fill="none" aria-hidden="true">
+              <circle cx="52" cy="125" r="46"/>
+              <circle cx="52" cy="125" r="92"/>
+              <circle cx="52" cy="125" r="138"/>
+              <line x1="52" y1="125" x2="326" y2="125"/>
+              <line x1="52" y1="10" x2="52" y2="240"/>
+            </g>
+            <!-- reference axis -->
+            <line x1="52" y1="125" x2="322" y2="125" stroke="rgba(255,255,255,0.14)" stroke-dasharray="4 5" aria-hidden="true"/>
+            <!-- angle arc -->
+            <path id="arc" d="" fill="none" stroke="#ffd166" stroke-width="2" aria-hidden="true"/>
+            <!-- vector A (cyan) -->
+            <line id="arrow-a" x1="52" y1="125" x2="52" y2="125" stroke="#00ffc8" stroke-width="2.5" aria-hidden="true"/>
+            <!-- vector B (magenta) -->
+            <line id="arrow-b" x1="52" y1="125" x2="52" y2="125" stroke="#ff6af6" stroke-width="2.5" aria-hidden="true"/>
+            <!-- arrowheads -->
+            <polygon id="head-a" points="" fill="#00ffc8" aria-hidden="true"/>
+            <polygon id="head-b" points="" fill="#ff6af6" aria-hidden="true"/>
+            <!-- labels -->
+            <text id="theta-label" x="0" y="0" fill="#ffd166" font-size="12" font-family="ui-monospace, Menlo, monospace" text-anchor="middle" aria-hidden="true">θ</text>
+            <text id="match-badge" x="0" y="0" fill="#00ff88" font-size="13" font-weight="bold" font-family="ui-monospace, Menlo, monospace" text-anchor="middle" aria-hidden="true" visibility="hidden">MATCH INMINENTE</text>
+            <text x="60" y="238" fill="rgba(255,255,255,0.35)" font-size="10" font-family="ui-monospace, Menlo, monospace" aria-hidden="true">arrow length = |vector| · arc = angle θ between profiles</text>
+          </svg>
+
+          <div class="results" aria-live="polite">
+            <div class="stat-grid">
+              <div class="stat">
+                <span class="k">Cosine similarity</span>
+                <span class="v" id="sim-val">—</span>
+              </div>
+              <div class="stat">
+                <span class="k">Ángulo θ</span>
+                <span class="v" id="theta-val">—</span>
+              </div>
+              <div class="stat">
+                <span class="k">Probabilidad de Amarre</span>
+                <span class="v" id="amarre-val">—</span>
+              </div>
+            </div>
+            <div class="amarre-bar" aria-hidden="true"><div class="fill" id="amarre-fill"></div></div>
+            <p class="status-line" id="status-line">…</p>
+            <p class="status-sub" id="status-sub"></p>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="formula">
+        <strong style="color: var(--gold)">How the spell works:</strong>
+        each profile becomes a vector in a 3-dimensional latent space
+        (<code>tech</code>, <code>café</code>, <code>asunción</code> — the same feature map as the Python spell).
+        The engine computes <code>sim = A·B / (|A|·|B|)</code>, the angle <code>θ = acos(sim)</code>,
+        and the <em>Probabilidad de Amarre</em> as <code>sim^1.3 × 100</code>.
+        Above 80% the vectors are already staring at each other in latent space… 👀
+      </div>
+    </section>
+
+    <!-- ============ QUICK START ============ -->
+    <section id="quickstart" aria-labelledby="quickstart-title">
+      <h2 id="quickstart-title">Cast the terminal spells 🧙‍♀️</h2>
+      <p class="section-intro">Set up once, then run any spell from the command line. Full instructions live in the <a href="https://github.com/ch1llc0d3/hechizo_matematico_demo#readme" target="_blank" rel="noopener">README</a>.</p>
+
+      <div class="terminal">
+        <div class="bar" aria-hidden="true"><span></span><span></span><span></span></div>
+        <pre><code>python3 -m venv .venv
+source .venv/bin/activate          <span class="c"># macOS/Linux (Windows: .venv\Scripts\activate)</span>
+pip install -r requirements.txt
+
+python hechizo_matematico.py       <span class="c"># 💘 Spell 1 — Love Compass</span>
+python sociological_profiler.py --webcam   <span class="c"># 👁️ Spell 2 — Digital Eye</span>
+python elo_ranking_sim.py          <span class="c"># 📈 Spell 3 — Popularity Game</span>
+python dating_sre_simulation.py    <span class="c"># 🛡️ Bonus — HA Love Cluster</span></code></pre>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>MIT License © 2026 ch1llc0d3 · <a href="https://github.com/ch1llc0d3/hechizo_matematico_demo" target="_blank" rel="noopener">hechizo_matematico_demo</a></p>
+      <p>The interactive compass runs the same math as <code style="font-family: var(--mono); color: var(--gold);">hechizo_matematico.py</code> — cosine similarity, angle, and a pinch of wizardry. Nothing here is meant to break your computer 💻🔮</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var IDS = ["tech", "cafe", "asu"];
+      var PREFIXES = ["a", "b"];
+      var MAX_MAG = Math.sqrt(3 * 1.5 * 1.5); // max possible |vector| with all sliders at 1.5
+      var ORIGIN = { x: 52, y: 125 };
+      var MAX_LEN = 258; // px, longest arrow at max magnitude
+
+      function readVec(prefix) {
+        return IDS.map(function (id) {
+          return parseFloat(document.getElementById(prefix + "-" + id).value, 10);
+        });
+      }
+
+      function dot(a, b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+      }
+      function norm(v) {
+        return Math.sqrt(dot(v, v));
+      }
+      function clamp(x, lo, hi) {
+        return Math.max(lo, Math.min(hi, x));
+      }
+
+      function setArrow(prefix, angleRad, mag, color) {
+        var len = (mag / MAX_MAG) * MAX_LEN;
+        var tipX = ORIGIN.x + len * Math.cos(angleRad);
+        var tipY = ORIGIN.y + len * Math.sin(angleRad);
+
+        var line = document.getElementById("arrow-" + prefix);
+        line.setAttribute("x2", tipX.toFixed(2));
+        line.setAttribute("y2", tipY.toFixed(2));
+
+        // arrowhead: small triangle oriented along the vector
+        var headLen = 11;
+        var wing = 5.5;
+        var ux = Math.cos(angleRad), uy = Math.sin(angleRad);
+        var px = -uy, py = ux; // perpendicular
+        var bx = tipX - headLen * ux, by = tipY - headLen * uy;
+        var poly = document.getElementById("head-" + prefix);
+        poly.setAttribute("points",
+          tipX.toFixed(2) + "," + tipY.toFixed(2) + " " +
+          (bx + wing * px).toFixed(2) + "," + (by + wing * py).toFixed(2) + " " +
+          (bx - wing * px).toFixed(2) + "," + (by - wing * py).toFixed(2));
+      }
+
+      function update() {
+        // readouts next to each slider
+        PREFIXES.forEach(function (p) {
+          IDS.forEach(function (id) {
+            var el = document.getElementById(p + "-" + id);
+            document.getElementById(p + "-" + id + "-out").textContent =
+              parseFloat(el.value).toFixed(2);
+          });
+        });
+
+        var a = readVec("a");
+        var b = readVec("b");
+        var na = norm(a);
+        var nb = norm(b);
+
+        var simVal = document.getElementById("sim-val");
+        var thetaVal = document.getElementById("theta-val");
+        var amarreVal = document.getElementById("amarre-val");
+        var fill = document.getElementById("amarre-fill");
+        var statusLine = document.getElementById("status-line");
+        var statusSub = document.getElementById("status-sub");
+        var svg = document.getElementById("compass-svg");
+        var badge = document.getElementById("match-badge");
+
+        if (na === 0 || nb === 0) {
+          simVal.textContent = "—";
+          thetaVal.textContent = "—";
+          amarreVal.textContent = "—";
+          fill.style.width = "0%";
+          statusLine.textContent = "Un perfil vacío no apunta a ninguna parte…";
+          statusLine.className = "status-line moderada";
+          statusSub.textContent = "Sube al menos un rasgo de cada perfil para lanzar el hechizo.";
+          badge.setAttribute("visibility", "hidden");
+          svg.setAttribute("aria-label", "Compass idle: at least one profile vector is empty.");
+          setArrow("a", 0, 0);
+          setArrow("b", 0, 0);
+          document.getElementById("arc").setAttribute("d", "");
+          document.getElementById("theta-label").setAttribute("opacity", "0");
+          return;
+        }
+
+        // --- the exact math from hechizo_matematico.py ---
+        var sim = clamp(dot(a, b) / (na * nb), -1, 1);
+        var thetaRad = Math.acos(sim);
+        var thetaDeg = thetaRad * 180 / Math.PI;
+        var amarre = Math.pow(clamp(sim, 0, 1), 1.3) * 100;
+
+        simVal.textContent = sim.toFixed(4);
+        thetaVal.textContent = thetaDeg.toFixed(2) + "°";
+        amarreVal.textContent = amarre.toFixed(2) + "%";
+        fill.style.width = amarre.toFixed(1) + "%";
+
+        // status labels — same thresholds as the Python spell
+        if (amarre > 80) {
+          statusLine.textContent = "💘 MATCH INMINENTE";
+          statusLine.className = "status-line match";
+          statusSub.textContent = "Los vectores ya se están mirando raro en el espacio latente…";
+        } else if (amarre > 50) {
+          statusLine.textContent = "✨ Alta afinidad";
+          statusLine.className = "status-line alta";
+          statusSub.textContent = "Un par de cafés más y el coseno hace el resto.";
+        } else {
+          statusLine.textContent = "🌙 Afinidad moderada";
+          statusLine.className = "status-line moderada";
+          statusSub.textContent = "Tal vez necesitan más dimensiones en común.";
+        }
+
+        // --- draw the compass: arrows split symmetrically around the axis ---
+        var half = thetaRad / 2;
+        setArrow("a", -half, na, "#00ffc8"); // A above the axis
+        setArrow("b", half, nb, "#ff6af6");  // B below the axis
+
+        // angle arc between the arrow directions
+        var r = 58;
+        var x1 = ORIGIN.x + r * Math.cos(-half);
+        var y1 = ORIGIN.y + r * Math.sin(-half);
+        var x2 = ORIGIN.x + r * Math.cos(half);
+        var y2 = ORIGIN.y + r * Math.sin(half);
+        var largeArc = thetaRad > Math.PI ? 1 : 0;
+        document.getElementById("arc").setAttribute("d",
+          "M " + x1.toFixed(2) + " " + y1.toFixed(2) +
+          " A " + r + " " + r + " 0 " + largeArc + " 1 " + x2.toFixed(2) + " " + y2.toFixed(2));
+
+        var thetaLabel = document.getElementById("theta-label");
+        thetaLabel.setAttribute("x", (ORIGIN.x + r + 34).toFixed(2));
+        thetaLabel.setAttribute("y", (ORIGIN.y + 4).toFixed(2));
+        thetaLabel.setAttribute("opacity", "1");
+        thetaLabel.textContent = "θ ≈ " + thetaDeg.toFixed(1) + "°";
+
+        // the Python plot stamps MATCH INMINENTE when θ < 25°
+        if (thetaDeg < 25) {
+          badge.setAttribute("x", "196");
+          badge.setAttribute("y", "34");
+          badge.setAttribute("visibility", "visible");
+        } else {
+          badge.setAttribute("visibility", "hidden");
+        }
+
+        svg.setAttribute("aria-label",
+          "Compass: the two profile vectors form an angle of " +
+          thetaDeg.toFixed(1) + " degrees; Probabilidad de Amarre " +
+          amarre.toFixed(1) + " percent.");
+      }
+
+      PREFIXES.forEach(function (p) {
+        IDS.forEach(function (id) {
+          document.getElementById(p + "-" + id).addEventListener("input", update);
+        });
+      });
+
+      update();
+    })();
+  </script>
+</body>
+</html>

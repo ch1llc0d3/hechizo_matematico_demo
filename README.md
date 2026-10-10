@@ -1,7 +1,7 @@
 # Digital Wizard’s Toolkit 🐙💻🔮
 
 Welcome to your tiny **wizard lab for data, vibes, and networks**.  
-This repo is a **Digital Wizard’s Toolkit**: three friendly spells you can run from the terminal without needing to be a grown‑up engineer.
+This repo is a **Digital Wizard’s Toolkit**: three friendly spells (plus a bonus fourth!) you can run from the terminal without needing to be a grown‑up engineer.
 
 - 🧪 **Spell 1 – The Love Compass** (`hechizo_matematico.py`)  
   Two invisible arrows in space, one for each person. The spell measures **how close their directions are** and draws them in 3D. Smaller angle = more “hmm… interesting…” 💘
@@ -12,11 +12,22 @@ This repo is a **Digital Wizard’s Toolkit**: three friendly spells you can run
 - 📈 **Spell 3 – The Popularity Game** (`elo_ranking_sim.py`)  
   A pretend dating app full of tiny nodes (people). Every interaction changes their **Elo score** like in online games. High‑Elo profiles behave like **VIP servers** in an SRE system, with a **load balancer** making sure no one becomes a scary all‑powerful super‑node 🛡️.
 
-All three spells are written in **Python**, and you run them from the terminal like a command‑line spellbook 🚀.
+- 🚀 **Bonus Spell – The HA Love Cluster** (`dating_sre_simulation.py`)  
+  A high‑availability twist on the Popularity Game! A dating app simulated as a **distributed system** with network effects, traffic‑aware load balancing, tier promotions, and system entropy. Watch nodes race to the **Desirability Peak** 🏔️.
+
+All four spells are written in **Python**, and you run them from the terminal like a command‑line spellbook 🚀.
+
+### ✨ Try it on the web ✨
+
+Don't want to install anything yet? There is now a **live web version** at:
+
+**<https://ch1llc0d3.github.io/hechizo_matematico_demo/>**
+
+It hosts an interactive **browser version of The Love Compass** — no Python, no terminal, just open the link and start exploring cosine similarity in your browser 🌐💘.
 
 ---
 
-## The 3 Spells (Demos) 🔮
+## The Spells (Demos) 🔮
 
 ### 1. The Love Compass – `hechizo_matematico.py`
 
@@ -78,6 +89,22 @@ It’s like watching a **tiny internet of people** trying to be popular, with SR
 
 ---
 
+### 4. The HA Love Cluster (Bonus!) – `dating_sre_simulation.py`
+
+This is the **evolved form** of the Popularity Game 🦋 — same core idea (users as nodes, Elo scoring, Rich live dashboard) but with extra **SRE wizardry** baked in:
+
+- **Network Effect multiplier:** When a high‑Elo node interacts with a low‑Elo node, both Elo deltas are multiplied by `exp(gap/400)` (clamped to 3.0). Big desirability gaps create **bigger ranking shifts** — drama included 🌋.
+- **Traffic‑aware load balancer:** When picking a match candidate, nodes that already got lots of traffic are **down‑weighted** (penalty `1/(1 + 0.3*traffic)`), so super‑nodes and influencers don't monopolize every match ⚖️.
+- **Tier system:** Tier 1 = Elo ≥ 1800 (“Desirability Peak”), Tier 2 = ≥ 1600, Tier 3 = everyone else. A live **Promotion Log** shows nodes crossing into Tier 1 in real time 🏆.
+- **System entropy:** Shannon entropy of the interaction distribution — a measure of **match diversity**. Higher = healthier cluster 📊.
+
+**How is it different from the Popularity Game?**
+Spell 3 is the gentle introduction. This bonus spell cranks the SRE metaphors up to eleven: network‑effect multipliers, traffic‑penalised load balancing, tier thresholds, and promotion detection — all visible on a richer dashboard with **Top 10 table, Metrics panel, and Promotion Log**.
+
+Runs **30 nodes / 200 steps** with a live Rich dashboard.
+
+---
+
 ## The Recipe: Setting Up Your Magic Kitchen 🧙‍♀️🍳
 
 We’ll set things up **once**, then you can run any spell easily.
@@ -87,7 +114,7 @@ We’ll set things up **once**, then you can run any spell easily.
 Open your terminal and go to the project folder:
 
 ```bash
-cd /Users/laptopmac/hechizo_matematico_demo
+cd ~/hechizo_matematico_demo
 ```
 
 If your folder lives somewhere else, change the path accordingly.
@@ -163,7 +190,7 @@ pip install -r requirements.txt
 This installs:
 
 - `numpy`, `matplotlib`, `scikit-learn` → math & plotting for **The Love Compass**.
-- `rich` → pretty terminal dashboards for **The Love Compass** and **The Popularity Game**.
+- `rich` → pretty terminal dashboards for **The Popularity Game** and **The HA Love Cluster**.
 - `opencv-python` (`cv2`) → camera & image windows for **The Digital Eye**.
 - `Pillow` (`PIL`) → reading images and EXIF.
 - `ultralytics` → YOLO model for object detection.
@@ -202,7 +229,7 @@ pip install name_of_the_missing_package
 
 All of these commands assume:
 
-- You are **inside** the project folder (`cd /Users/laptopmac/hechizo_matematico_demo`), and  
+- You are **inside** the project folder (`cd ~/hechizo_matematico_demo`), and  
 - Your virtual environment is **activated** (`(.venv)` visible in the terminal).
 
 If your system uses `python3` instead of `python`, just swap the word.
@@ -298,6 +325,22 @@ When it finishes, it prints “Simulation finished.” You can run it again as m
 
 ---
 
+### Spell 4 (Bonus): The HA Love Cluster 🚀🏔️ (`dating_sre_simulation.py`)
+
+```bash
+python dating_sre_simulation.py
+```
+
+You’ll see a **Rich dashboard** with even more SRE flair:
+
+- **Top 10 High-Priority Nodes** table (Elo score, Tier, interaction count),
+- **Metrics panel** showing system entropy (match diversity),
+- **Promotion Log** announcing nodes that climb into Tier 1 (Desirability Peak).
+
+Let the cluster run its 200 steps and watch the tiers shake out. Run it as many times as you like — every run is a new tiny internet 🚀.
+
+---
+
 ## Turbo Mode: Super‑Quick Cheat Sheet 🚀
 
 If you’re in a hurry and already kind of know what a terminal is, this section is for you.
@@ -305,7 +348,7 @@ If you’re in a hurry and already kind of know what a terminal is, this section
 ### One‑time setup
 
 ```bash
-cd /Users/laptopmac/hechizo_matematico_demo
+cd ~/hechizo_matematico_demo
 python3 -m venv .venv
 source .venv/bin/activate           # On macOS/Linux
 pip install --upgrade pip
@@ -315,7 +358,7 @@ pip install -r requirements.txt
 ### Every time you come back
 
 ```bash
-cd /Users/laptopmac/hechizo_matematico_demo
+cd ~/hechizo_matematico_demo
 source .venv/bin/activate           # Or Windows equivalent
 ```
 
@@ -324,6 +367,7 @@ source .venv/bin/activate           # Or Windows equivalent
 ```bash
 python hechizo_matematico.py                # Spell 1 – Love Compass
 python elo_ranking_sim.py                   # Spell 3 – Popularity Game
+python dating_sre_simulation.py             # Spell 4 – HA Love Cluster (bonus!)
 python sociological_profiler.py --webcam    # Spell 2 – Digital Eye (webcam)
 python sociological_profiler.py --image photo.jpg
 ```
@@ -432,7 +476,7 @@ These often mean:
 You can bypass that by calling the Python inside your venv directly:
 
 ```bash
-/Users/laptopmac/hechizo_matematico_demo/.venv/bin/python hechizo_matematico.py
+~/hechizo_matematico_demo/.venv/bin/python hechizo_matematico.py
 ```
 
 On Windows:
@@ -461,12 +505,14 @@ Without quotes, the terminal thinks the path is several different words and gets
 
 ```text
 hechizo_matematico_demo/
-├── README.md                 # This magical guide you’re reading
-├── requirements.txt          # List of spell ingredients (Python packages)
-├── hechizo_matematico.py     # Spell 1: The Love Compass (3D cosine magic)
-├── elo_ranking_sim.py        # Spell 3: The Popularity Game (Elo + SRE vibes)
-├── sociological_profiler.py  # Spell 2: The Digital Eye (YOLO + EXIF)
-└── .venv/                    # Your private magic room (virtual environment)
+├── README.md                  # This magical guide you’re reading
+├── LICENSE                    # MIT license (ch1llc0d3, 2026)
+├── requirements.txt           # List of spell ingredients (Python packages)
+├── hechizo_matematico.py      # Spell 1: The Love Compass (3D cosine magic)
+├── elo_ranking_sim.py         # Spell 3: The Popularity Game (Elo + SRE vibes)
+├── dating_sre_simulation.py   # Spell 4: The HA Love Cluster (bonus! SRE dating sim)
+├── sociological_profiler.py   # Spell 2: The Digital Eye (YOLO + EXIF)
+└── .venv/                     # Your private magic room (virtual environment)
 ```
 
 ---
