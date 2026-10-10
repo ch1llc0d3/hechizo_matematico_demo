@@ -6,8 +6,28 @@
   <title>Digital Wizard&rsquo;s Toolkit — hechizo_matematico</title>
   <meta name="description" content="A tiny wizard lab for data, vibes, and networks. Three friendly Python spells — cosine-similarity matchmaking, YOLO + EXIF image vibes, and an Elo/SRE dating simulation — plus a live browser version of the Love Compass.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐙</text></svg>">
+  <script>
+    /* Apply saved theme + language before first paint (prevents flash). */
+    (function () {
+      var root = document.documentElement;
+      var theme = "";
+      var lang = "";
+      try { theme = localStorage.getItem("hm-theme") || ""; } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+      }
+      root.setAttribute("data-theme", theme);
+      try { lang = localStorage.getItem("hm-lang") || ""; } catch (e) {}
+      if (lang !== "en" && lang !== "es") {
+        lang = ((navigator.language || "en").toLowerCase().indexOf("es") === 0) ? "es" : "en";
+      }
+      root.setAttribute("lang", lang);
+      root.setAttribute("data-lang", lang);
+    })();
+  </script>
   <style>
     :root {
+      color-scheme: dark;
       --bg: #050814;
       --bg-soft: #0a0f22;
       --ink: #e8ecf4;
@@ -21,6 +41,76 @@
       --radius: 14px;
       --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+      /* theme-aware lines, surfaces & tints (light overrides below) */
+      --line: rgba(255, 255, 255, 0.08);
+      --line-soft: rgba(255, 255, 255, 0.07);
+      --card-soft: rgba(255, 255, 255, 0.02);
+      --card-hover: rgba(255, 255, 255, 0.055);
+      --card-hover-border: rgba(0, 255, 200, 0.4);
+      --bar-track: rgba(255, 255, 255, 0.07);
+      --grid-line: rgba(255, 255, 255, 0.06);
+      --grid-line-strong: rgba(255, 255, 255, 0.14);
+      --svg-caption: rgba(255, 255, 255, 0.35);
+      --star: rgba(255, 255, 255, 0.48);
+      --star-soft: rgba(255, 255, 255, 0.34);
+      --hero-glow-a: rgba(0, 255, 200, 0.12);
+      --hero-glow-b: rgba(255, 106, 246, 0.12);
+      --hero-border: rgba(0, 255, 200, 0.15);
+      --cta-bg: rgba(0, 255, 200, 0.06);
+      --cta-bg-hover: rgba(0, 255, 200, 0.12);
+      --cta-border-hover: rgba(0, 255, 200, 0.45);
+      --profile-a: rgba(0, 255, 200, 0.35);
+      --profile-b: rgba(255, 106, 246, 0.35);
+      --formula-border: rgba(255, 209, 102, 0.35);
+      --formula-bg: rgba(255, 209, 102, 0.04);
+      --bonus-border: rgba(255, 209, 102, 0.25);
+      --bonus-border-hover: rgba(255, 209, 102, 0.5);
+      --code-bg: rgba(255, 209, 102, 0.08);
+      --match-glow: rgba(0, 255, 136, 0.45);
+      --controls-bg: rgba(5, 8, 20, 0.72);
+      --btn-bg-hover: rgba(255, 255, 255, 0.12);
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f5f7fc;
+      --bg-soft: #eaeef7;
+      --ink: #1c2434;
+      --ink-dim: #5a6578;
+      --cyan: #007a63;
+      --magenta: #b03ec4;
+      --gold: #8a6600;
+      --green: #007a4d;
+      --card: rgba(20, 30, 55, 0.035);
+      --card-border: rgba(0, 122, 99, 0.28);
+      --line: rgba(20, 30, 55, 0.14);
+      --line-soft: rgba(20, 30, 55, 0.10);
+      --card-soft: rgba(20, 30, 55, 0.025);
+      --card-hover: rgba(20, 30, 55, 0.06);
+      --card-hover-border: rgba(0, 122, 99, 0.45);
+      --bar-track: rgba(20, 30, 55, 0.10);
+      --grid-line: rgba(20, 30, 55, 0.10);
+      --grid-line-strong: rgba(20, 30, 55, 0.22);
+      --svg-caption: rgba(28, 36, 52, 0.55);
+      --star: rgba(28, 36, 52, 0.26);
+      --star-soft: rgba(28, 36, 52, 0.18);
+      --hero-glow-a: rgba(0, 122, 99, 0.10);
+      --hero-glow-b: rgba(176, 62, 196, 0.08);
+      --hero-border: rgba(0, 122, 99, 0.25);
+      --cta-bg: rgba(0, 122, 99, 0.07);
+      --cta-bg-hover: rgba(0, 122, 99, 0.14);
+      --cta-border-hover: rgba(0, 122, 99, 0.55);
+      --profile-a: rgba(0, 122, 99, 0.45);
+      --profile-b: rgba(176, 62, 196, 0.40);
+      --formula-border: rgba(150, 112, 10, 0.40);
+      --formula-bg: rgba(150, 112, 10, 0.05);
+      --bonus-border: rgba(150, 112, 10, 0.35);
+      --bonus-border-hover: rgba(150, 112, 10, 0.60);
+      --code-bg: rgba(150, 112, 10, 0.10);
+      --match-glow: rgba(0, 138, 86, 0.22);
+      --controls-bg: rgba(255, 255, 255, 0.82);
+      --btn-bg-hover: rgba(20, 30, 55, 0.12);
     }
 
     * { box-sizing: border-box; }
@@ -51,6 +141,55 @@
       border-radius: 4px;
     }
 
+    /* ---------- Theme + language controls ---------- */
+    .controls {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px;
+      background: var(--controls-bg);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    .lang-toggle { display: flex; gap: 2px; }
+
+    .controls button {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      padding: 7px 10px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink-dim);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .controls button:hover {
+      background: var(--btn-bg-hover);
+      color: var(--ink);
+    }
+
+    .lang-toggle button[aria-pressed="true"] {
+      background: var(--cyan);
+      color: var(--bg);
+    }
+
+    .controls .icon-btn {
+      padding: 6px 9px;
+      font-size: 0.85rem;
+    }
+
     /* ---------- Hero ---------- */
     .hero {
       position: relative;
@@ -58,10 +197,10 @@
       padding: 72px 0 56px;
       text-align: center;
       background:
-        radial-gradient(600px 300px at 20% 0%, rgba(0, 255, 200, 0.12), transparent 60%),
-        radial-gradient(600px 300px at 80% 10%, rgba(255, 106, 246, 0.12), transparent 60%),
+        radial-gradient(600px 300px at 20% 0%, var(--hero-glow-a), transparent 60%),
+        radial-gradient(600px 300px at 80% 10%, var(--hero-glow-b), transparent 60%),
         var(--bg);
-      border-bottom: 1px solid rgba(0, 255, 200, 0.15);
+      border-bottom: 1px solid var(--hero-border);
     }
 
     .hero h1 {
@@ -89,13 +228,13 @@
       padding: 11px 22px;
       border: 1px solid var(--card-border);
       border-radius: 999px;
-      background: rgba(0, 255, 200, 0.06);
+      background: var(--cta-bg);
       font-weight: 600;
       transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
     .hero .cta:hover {
-      background: rgba(0, 255, 200, 0.12);
-      border-color: rgba(0, 255, 200, 0.45);
+      background: var(--cta-bg-hover);
+      border-color: var(--cta-border-hover);
       transform: translateY(-1px);
       text-decoration: none;
     }
@@ -105,14 +244,14 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        radial-gradient(1.5px 1.5px at 12% 30%, rgba(255, 255, 255, 0.5), transparent),
-        radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.35), transparent),
-        radial-gradient(1.5px 1.5px at 55% 20%, rgba(255, 255, 255, 0.4), transparent),
-        radial-gradient(1px 1px at 70% 55%, rgba(255, 255, 255, 0.3), transparent),
-        radial-gradient(1.5px 1.5px at 88% 35%, rgba(255, 255, 255, 0.45), transparent),
-        radial-gradient(1px 1px at 45% 85%, rgba(255, 255, 255, 0.3), transparent),
-        radial-gradient(1px 1px at 8% 80%, rgba(255, 255, 255, 0.3), transparent),
-        radial-gradient(1.5px 1.5px at 92% 78%, rgba(255, 255, 255, 0.4), transparent);
+        radial-gradient(1.5px 1.5px at 12% 30%, var(--star), transparent),
+        radial-gradient(1px 1px at 30% 70%, var(--star-soft), transparent),
+        radial-gradient(1.5px 1.5px at 55% 20%, var(--star), transparent),
+        radial-gradient(1px 1px at 70% 55%, var(--star-soft), transparent),
+        radial-gradient(1.5px 1.5px at 88% 35%, var(--star), transparent),
+        radial-gradient(1px 1px at 45% 85%, var(--star-soft), transparent),
+        radial-gradient(1px 1px at 8% 80%, var(--star-soft), transparent),
+        radial-gradient(1.5px 1.5px at 92% 78%, var(--star), transparent);
     }
 
     /* ---------- Sections ---------- */
@@ -146,8 +285,8 @@
     }
     .card:hover {
       transform: translateY(-3px);
-      border-color: rgba(0, 255, 200, 0.4);
-      background: rgba(255, 255, 255, 0.055);
+      border-color: var(--card-hover-border);
+      background: var(--card-hover);
     }
 
     .card .glyph {
@@ -166,7 +305,7 @@
       font-family: var(--mono);
       font-size: 0.8rem;
       color: var(--gold);
-      background: rgba(255, 209, 102, 0.08);
+      background: var(--code-bg);
       padding: 2px 6px;
       border-radius: 6px;
       display: inline-block;
@@ -179,8 +318,8 @@
       font-size: 0.93rem;
     }
 
-    .card.bonus { border-color: rgba(255, 209, 102, 0.25); }
-    .card.bonus:hover { border-color: rgba(255, 209, 102, 0.5); }
+    .card.bonus { border-color: var(--bonus-border); }
+    .card.bonus:hover { border-color: var(--bonus-border-hover); }
 
     /* ---------- Compass widget ---------- */
     .compass-shell {
@@ -201,13 +340,13 @@
     }
 
     .profile {
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
       border-radius: 10px;
       padding: 16px;
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--card-soft);
     }
-    .profile.a { border-color: rgba(0, 255, 200, 0.35); }
-    .profile.b { border-color: rgba(255, 106, 246, 0.35); }
+    .profile.a { border-color: var(--profile-a); }
+    .profile.b { border-color: var(--profile-b); }
 
     .profile h3 {
       margin: 0 0 4px;
@@ -270,15 +409,27 @@
       background:
         radial-gradient(300px 160px at 50% 45%, rgba(0, 255, 200, 0.05), transparent 70%),
         var(--bg-soft);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--line-soft);
       border-radius: 10px;
     }
 
+    /* theme-aware SVG colors (CSS rules beat presentation attributes) */
+    #compass-svg .grid { stroke: var(--grid-line); }
+    #compass-svg .axis { stroke: var(--grid-line-strong); }
+    #compass-svg .caption { fill: var(--svg-caption); }
+    #arrow-a { stroke: var(--cyan); }
+    #head-a { fill: var(--cyan); }
+    #arrow-b { stroke: var(--magenta); }
+    #head-b { fill: var(--magenta); }
+    #arc { stroke: var(--gold); }
+    #theta-label { fill: var(--gold); }
+    #match-badge { fill: var(--green); }
+
     .results {
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
       border-radius: 10px;
       padding: 16px 18px;
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--card-soft);
     }
 
     .stat-grid {
@@ -305,7 +456,7 @@
     .amarre-bar {
       height: 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.07);
+      background: var(--bar-track);
       overflow: hidden;
       margin-bottom: 14px;
     }
@@ -324,7 +475,7 @@
       min-height: 1.6em;
       transition: color 0.25s ease;
     }
-    .status-line.match { color: var(--green); text-shadow: 0 0 18px rgba(0, 255, 136, 0.45); }
+    .status-line.match { color: var(--green); text-shadow: 0 0 18px var(--match-glow); }
     .status-line.alta { color: var(--magenta); }
     .status-line.moderada { color: var(--ink-dim); font-weight: 500; }
 
@@ -337,10 +488,10 @@
 
     /* ---------- Formula ---------- */
     .formula {
-      border: 1px dashed rgba(255, 209, 102, 0.35);
+      border: 1px dashed var(--formula-border);
       border-radius: var(--radius);
       padding: 20px 24px;
-      background: rgba(255, 209, 102, 0.04);
+      background: var(--formula-bg);
       color: var(--ink-dim);
       font-size: 0.95rem;
     }
@@ -352,7 +503,7 @@
 
     /* ---------- Quick start ---------- */
     .terminal {
-      background: #02030a;
+      background: #02030a; /* a terminal stays dark in both themes */
       border: 1px solid rgba(0, 255, 200, 0.2);
       border-radius: var(--radius);
       overflow: hidden;
@@ -389,12 +540,17 @@
     footer {
       margin-top: 64px;
       padding: 28px 0 40px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--line);
       color: var(--ink-dim);
       font-size: 0.85rem;
       text-align: center;
     }
     footer p { margin: 4px 0; }
+    footer code {
+      font-family: var(--mono);
+      color: var(--gold);
+      font-size: 0.9em;
+    }
 
     /* ---------- Responsive ---------- */
     @media (max-width: 780px) {
@@ -410,12 +566,20 @@
 </head>
 <body>
 
+  <div class="controls">
+    <div class="lang-toggle" role="group" aria-label="Language" data-i18n-aria-label="langGroup">
+      <button type="button" id="lang-en" aria-pressed="true" aria-label="English">EN</button>
+      <button type="button" id="lang-es" aria-pressed="false" aria-label="Español">ES</button>
+    </div>
+    <button type="button" id="theme-toggle" class="icon-btn" aria-pressed="true" aria-label="Switch to light theme">☀️</button>
+  </div>
+
   <header class="hero">
     <div class="stars" aria-hidden="true"></div>
     <div class="wrap">
-      <h1>Digital Wizard&rsquo;s Toolkit 🐙💻🔮</h1>
-      <p class="tagline">A tiny wizard lab for data, vibes, and networks — friendly spells you can run from the terminal, and one you can cast right here in your browser.</p>
-      <a class="cta" href="https://github.com/ch1llc0d3/hechizo_matematico_demo" target="_blank" rel="noopener">
+      <h1 data-i18n="h1">Digital Wizard&rsquo;s Toolkit 🐙💻🔮</h1>
+      <p class="tagline" data-i18n="tagline">A tiny wizard lab for data, vibes, and networks — friendly spells you can run from the terminal, and one you can cast right here in your browser.</p>
+      <a class="cta" href="https://github.com/ch1llc0d3/hechizo_matematico_demo" target="_blank" rel="noopener" data-i18n="cta">
         ✨ View the spellbook on GitHub
       </a>
     </div>
@@ -425,83 +589,83 @@
 
     <!-- ============ SPELLS ============ -->
     <section id="spells" aria-labelledby="spells-title">
-      <h2 id="spells-title">The Spells 🔮</h2>
-      <p class="section-intro">Four Python demos that turn matchmaking, images, and popularity into math you can watch.</p>
+      <h2 id="spells-title" data-i18n="spellsTitle">The Spells 🔮</h2>
+      <p class="section-intro" data-i18n="spellsIntro">Four Python demos that turn matchmaking, images, and popularity into math you can watch.</p>
 
       <div class="cards">
         <article class="card">
           <span class="glyph" aria-hidden="true">💘</span>
-          <h3>Spell 1 — The Love Compass</h3>
+          <h3 data-i18n="card1Title">Spell 1 — The Love Compass</h3>
           <code>hechizo_matematico.py</code>
-          <p>Turns two profiles into arrows in 3D space and measures the angle between them with cosine similarity. Smaller angle = more &ldquo;hmm… interesting…&rdquo; A mathematical crush detector.</p>
+          <p data-i18n="card1Desc">Turns two profiles into arrows in 3D space and measures the angle between them with cosine similarity. Smaller angle = more &ldquo;hmm… interesting…&rdquo; A mathematical crush detector.</p>
         </article>
 
         <article class="card">
           <span class="glyph" aria-hidden="true">👁️</span>
-          <h3>Spell 2 — The Digital Eye</h3>
+          <h3 data-i18n="card2Title">Spell 2 — The Digital Eye</h3>
           <code>sociological_profiler.py</code>
-          <p>YOLO object detection on your webcam or a photo, plus EXIF metadata reading — when, where, which camera. A gossiping crystal ball for images. Educational only.</p>
+          <p data-i18n="card2Desc">YOLO object detection on your webcam or a photo, plus EXIF metadata reading — when, where, which camera. A gossiping crystal ball for images. Educational only.</p>
         </article>
 
         <article class="card">
           <span class="glyph" aria-hidden="true">📈</span>
-          <h3>Spell 3 — The Popularity Game</h3>
+          <h3 data-i18n="card3Title">Spell 3 — The Popularity Game</h3>
           <code>elo_ranking_sim.py</code>
-          <p>A pretend dating app run like an SRE system: 50 nodes with Elo scores, matches are successful transactions, dislikes are timeouts, and a load balancer keeps super-nodes in check.</p>
+          <p data-i18n="card3Desc">A pretend dating app run like an SRE system: 50 nodes with Elo scores, matches are successful transactions, dislikes are timeouts, and a load balancer keeps super-nodes in check.</p>
         </article>
 
         <article class="card bonus">
           <span class="glyph" aria-hidden="true">🛡️</span>
-          <h3>Bonus Spell — The HA Love Cluster</h3>
+          <h3 data-i18n="card4Title">Bonus Spell — The HA Love Cluster</h3>
           <code>dating_sre_simulation.py</code>
-          <p>The Popularity Game&rsquo;s sibling: exponential network effects when high-Elo nodes meet low-Elo nodes, traffic-aware load balancing, and a live Tier&nbsp;1 &ldquo;Desirability Peak&rdquo; promotion log.</p>
+          <p data-i18n="card4Desc">The Popularity Game&rsquo;s sibling: exponential network effects when high-Elo nodes meet low-Elo nodes, traffic-aware load balancing, and a live Tier&nbsp;1 &ldquo;Desirability Peak&rdquo; promotion log.</p>
         </article>
       </div>
     </section>
 
     <!-- ============ INTERACTIVE COMPASS ============ -->
     <section id="compass" aria-labelledby="compass-title">
-      <h2 id="compass-title">The Love Compass, in your browser 💘</h2>
-      <p class="section-intro">The same math as <code>hechizo_matematico.py</code>, no Python required. Give each profile a direction in the latent space and watch the angle between them respond.</p>
+      <h2 id="compass-title" data-i18n="compassTitle">The Love Compass, in your browser 💘</h2>
+      <p class="section-intro" data-i18n-html="compassIntro">The same math as <code>hechizo_matematico.py</code>, no Python required. Give each profile a direction in the latent space and watch the angle between them respond.</p>
 
       <div class="compass-shell">
         <div class="profiles">
 
           <div class="profile a">
-            <h3>Perfil A <span class="vec" id="vec-a-label">(tech, café, asunción)</span></h3>
-            <p class="hint">Cyan arrow · the first person</p>
+            <h3><span data-i18n="profileA">Profile A</span> <span class="vec" id="vec-a-label" data-i18n="vecLabel">(tech, coffee, asunción)</span></h3>
+            <p class="hint" data-i18n="hintA">Cyan arrow · the first person</p>
             <div class="slider-row">
-              <label for="a-tech">Tech</label>
+              <label for="a-tech" data-i18n="sliderTech">Tech</label>
               <input type="range" id="a-tech" min="0" max="1.5" step="0.01" value="1.0">
               <output for="a-tech" id="a-tech-out">1.00</output>
             </div>
             <div class="slider-row">
-              <label for="a-cafe">Café</label>
+              <label for="a-cafe" data-i18n="sliderCafe">Coffee</label>
               <input type="range" id="a-cafe" min="0" max="1.5" step="0.01" value="0.9">
               <output for="a-cafe" id="a-cafe-out">0.90</output>
             </div>
             <div class="slider-row">
-              <label for="a-asu">Asunción</label>
+              <label for="a-asu" data-i18n="sliderAsu">Asunción</label>
               <input type="range" id="a-asu" min="0" max="1.5" step="0.01" value="0.8">
               <output for="a-asu" id="a-asu-out">0.80</output>
             </div>
           </div>
 
           <div class="profile b">
-            <h3>Perfil B <span class="vec" id="vec-b-label">(tech, café, asunción)</span></h3>
-            <p class="hint">Magenta arrow · the second person</p>
+            <h3><span data-i18n="profileB">Profile B</span> <span class="vec" id="vec-b-label" data-i18n="vecLabel">(tech, coffee, asunción)</span></h3>
+            <p class="hint" data-i18n="hintB">Magenta arrow · the second person</p>
             <div class="slider-row">
-              <label for="b-tech">Tech</label>
+              <label for="b-tech" data-i18n="sliderTech">Tech</label>
               <input type="range" id="b-tech" min="0" max="1.5" step="0.01" value="0.95">
               <output for="b-tech" id="b-tech-out">0.95</output>
             </div>
             <div class="slider-row">
-              <label for="b-cafe">Café</label>
+              <label for="b-cafe" data-i18n="sliderCafe">Coffee</label>
               <input type="range" id="b-cafe" min="0" max="1.5" step="0.01" value="0.85">
               <output for="b-cafe" id="b-cafe-out">0.85</output>
             </div>
             <div class="slider-row">
-              <label for="b-asu">Asunción</label>
+              <label for="b-asu" data-i18n="sliderAsu">Asunción</label>
               <input type="range" id="b-asu" min="0" max="1.5" step="0.01" value="0.88">
               <output for="b-asu" id="b-asu-out">0.88</output>
             </div>
@@ -509,9 +673,9 @@
         </div>
 
         <div class="viz">
-          <svg id="compass-svg" viewBox="0 0 340 250" role="img" aria-label="Compass showing the angle between the two profile vectors">
+          <svg id="compass-svg" viewBox="0 0 340 250" role="img" aria-label="Compass showing the angle between the two profile vectors" data-i18n-aria-label="svgAria">
             <!-- faint compass grid -->
-            <g stroke="rgba(255,255,255,0.06)" fill="none" aria-hidden="true">
+            <g class="grid" fill="none" aria-hidden="true">
               <circle cx="52" cy="125" r="46"/>
               <circle cx="52" cy="125" r="92"/>
               <circle cx="52" cy="125" r="138"/>
@@ -519,34 +683,34 @@
               <line x1="52" y1="10" x2="52" y2="240"/>
             </g>
             <!-- reference axis -->
-            <line x1="52" y1="125" x2="322" y2="125" stroke="rgba(255,255,255,0.14)" stroke-dasharray="4 5" aria-hidden="true"/>
+            <line class="axis" x1="52" y1="125" x2="322" y2="125" stroke-dasharray="4 5" aria-hidden="true"/>
             <!-- angle arc -->
-            <path id="arc" d="" fill="none" stroke="#ffd166" stroke-width="2" aria-hidden="true"/>
+            <path id="arc" d="" fill="none" stroke-width="2" aria-hidden="true"/>
             <!-- vector A (cyan) -->
-            <line id="arrow-a" x1="52" y1="125" x2="52" y2="125" stroke="#00ffc8" stroke-width="2.5" aria-hidden="true"/>
+            <line id="arrow-a" x1="52" y1="125" x2="52" y2="125" stroke-width="2.5" aria-hidden="true"/>
             <!-- vector B (magenta) -->
-            <line id="arrow-b" x1="52" y1="125" x2="52" y2="125" stroke="#ff6af6" stroke-width="2.5" aria-hidden="true"/>
+            <line id="arrow-b" x1="52" y1="125" x2="52" y2="125" stroke-width="2.5" aria-hidden="true"/>
             <!-- arrowheads -->
-            <polygon id="head-a" points="" fill="#00ffc8" aria-hidden="true"/>
-            <polygon id="head-b" points="" fill="#ff6af6" aria-hidden="true"/>
+            <polygon id="head-a" points="" aria-hidden="true"/>
+            <polygon id="head-b" points="" aria-hidden="true"/>
             <!-- labels -->
-            <text id="theta-label" x="0" y="0" fill="#ffd166" font-size="12" font-family="ui-monospace, Menlo, monospace" text-anchor="middle" aria-hidden="true">θ</text>
-            <text id="match-badge" x="0" y="0" fill="#00ff88" font-size="13" font-weight="bold" font-family="ui-monospace, Menlo, monospace" text-anchor="middle" aria-hidden="true" visibility="hidden">MATCH INMINENTE</text>
-            <text x="60" y="238" fill="rgba(255,255,255,0.35)" font-size="10" font-family="ui-monospace, Menlo, monospace" aria-hidden="true">arrow length = |vector| · arc = angle θ between profiles</text>
+            <text id="theta-label" x="0" y="0" font-size="12" font-family="ui-monospace, Menlo, monospace" text-anchor="middle" aria-hidden="true">θ</text>
+            <text id="match-badge" x="0" y="0" font-size="13" font-weight="bold" font-family="ui-monospace, Menlo, monospace" text-anchor="middle" aria-hidden="true" visibility="hidden">IMMINENT MATCH</text>
+            <text class="caption" x="60" y="238" font-size="10" font-family="ui-monospace, Menlo, monospace" aria-hidden="true" data-i18n="svgCaption">arrow length = |vector| · arc = angle θ between profiles</text>
           </svg>
 
           <div class="results" aria-live="polite">
             <div class="stat-grid">
               <div class="stat">
-                <span class="k">Cosine similarity</span>
+                <span class="k" data-i18n="statSim">Cosine similarity</span>
                 <span class="v" id="sim-val">—</span>
               </div>
               <div class="stat">
-                <span class="k">Ángulo θ</span>
+                <span class="k" data-i18n="statTheta">Angle θ</span>
                 <span class="v" id="theta-val">—</span>
               </div>
               <div class="stat">
-                <span class="k">Probabilidad de Amarre</span>
+                <span class="k" data-i18n="statAmarre">Love Probability</span>
                 <span class="v" id="amarre-val">—</span>
               </div>
             </div>
@@ -559,31 +723,31 @@
 
       <br>
 
-      <div class="formula">
+      <div class="formula" data-i18n-html="formulaHtml">
         <strong style="color: var(--gold)">How the spell works:</strong>
         each profile becomes a vector in a 3-dimensional latent space
-        (<code>tech</code>, <code>café</code>, <code>asunción</code> — the same feature map as the Python spell).
+        (<code>tech</code>, <code>coffee</code>, <code>asunción</code> — the same feature map as the Python spell).
         The engine computes <code>sim = A·B / (|A|·|B|)</code>, the angle <code>θ = acos(sim)</code>,
-        and the <em>Probabilidad de Amarre</em> as <code>sim^1.3 × 100</code>.
+        and the <em>Love Probability</em> as <code>sim^1.3 × 100</code>.
         Above 80% the vectors are already staring at each other in latent space… 👀
       </div>
     </section>
 
     <!-- ============ QUICK START ============ -->
     <section id="quickstart" aria-labelledby="quickstart-title">
-      <h2 id="quickstart-title">Cast the terminal spells 🧙‍♀️</h2>
-      <p class="section-intro">Set up once, then run any spell from the command line. Full instructions live in the <a href="https://github.com/ch1llc0d3/hechizo_matematico_demo#readme" target="_blank" rel="noopener">README</a>.</p>
+      <h2 id="quickstart-title" data-i18n="qsTitle">Cast the terminal spells 🧙‍♀️</h2>
+      <p class="section-intro" data-i18n-html="qsIntro">Set up once, then run any spell from the command line. Full instructions live in the <a href="https://github.com/ch1llc0d3/hechizo_matematico_demo#readme" target="_blank" rel="noopener">README</a>.</p>
 
       <div class="terminal">
         <div class="bar" aria-hidden="true"><span></span><span></span><span></span></div>
         <pre><code>python3 -m venv .venv
-source .venv/bin/activate          <span class="c"># macOS/Linux (Windows: .venv\Scripts\activate)</span>
+source .venv/bin/activate          <span class="c" data-i18n="termVenv"># macOS/Linux (Windows: .venv\Scripts\activate)</span>
 pip install -r requirements.txt
 
-python hechizo_matematico.py       <span class="c"># 💘 Spell 1 — Love Compass</span>
-python sociological_profiler.py --webcam   <span class="c"># 👁️ Spell 2 — Digital Eye</span>
-python elo_ranking_sim.py          <span class="c"># 📈 Spell 3 — Popularity Game</span>
-python dating_sre_simulation.py    <span class="c"># 🛡️ Bonus — HA Love Cluster</span></code></pre>
+python hechizo_matematico.py       <span class="c" data-i18n="term1"># 💘 Spell 1 — Love Compass</span>
+python sociological_profiler.py --webcam   <span class="c" data-i18n="term2"># 👁️ Spell 2 — Digital Eye</span>
+python elo_ranking_sim.py          <span class="c" data-i18n="term3"># 📈 Spell 3 — Popularity Game</span>
+python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ Bonus — HA Love Cluster</span></code></pre>
       </div>
     </section>
 
@@ -592,13 +756,216 @@ python dating_sre_simulation.py    <span class="c"># 🛡️ Bonus — HA Love C
   <footer>
     <div class="wrap">
       <p>MIT License © 2026 ch1llc0d3 · <a href="https://github.com/ch1llc0d3/hechizo_matematico_demo" target="_blank" rel="noopener">hechizo_matematico_demo</a></p>
-      <p>The interactive compass runs the same math as <code style="font-family: var(--mono); color: var(--gold);">hechizo_matematico.py</code> — cosine similarity, angle, and a pinch of wizardry. Nothing here is meant to break your computer 💻🔮</p>
+      <p data-i18n-html="footerP2">The interactive compass runs the same math as <code>hechizo_matematico.py</code> — cosine similarity, angle, and a pinch of wizardry. Nothing here is meant to break your computer 💻🔮</p>
     </div>
   </footer>
 
   <script>
     (function () {
       "use strict";
+
+      /* ================= i18n + theme ================= */
+
+      var I18N = {
+        en: {
+          title: "Digital Wizard’s Toolkit — hechizo_matematico",
+          h1: "Digital Wizard’s Toolkit 🐙💻🔮",
+          tagline: "A tiny wizard lab for data, vibes, and networks — friendly spells you can run from the terminal, and one you can cast right here in your browser.",
+          cta: "✨ View the spellbook on GitHub",
+          spellsTitle: "The Spells 🔮",
+          spellsIntro: "Four Python demos that turn matchmaking, images, and popularity into math you can watch.",
+          card1Title: "Spell 1 — The Love Compass",
+          card1Desc: "Turns two profiles into arrows in 3D space and measures the angle between them with cosine similarity. Smaller angle = more “hmm… interesting…” A mathematical crush detector.",
+          card2Title: "Spell 2 — The Digital Eye",
+          card2Desc: "YOLO object detection on your webcam or a photo, plus EXIF metadata reading — when, where, which camera. A gossiping crystal ball for images. Educational only.",
+          card3Title: "Spell 3 — The Popularity Game",
+          card3Desc: "A pretend dating app run like an SRE system: 50 nodes with Elo scores, matches are successful transactions, dislikes are timeouts, and a load balancer keeps super-nodes in check.",
+          card4Title: "Bonus Spell — The HA Love Cluster",
+          card4Desc: "The Popularity Game’s sibling: exponential network effects when high-Elo nodes meet low-Elo nodes, traffic-aware load balancing, and a live Tier 1 “Desirability Peak” promotion log.",
+          compassTitle: "The Love Compass, in your browser 💘",
+          compassIntro: "The same math as <code>hechizo_matematico.py</code>, no Python required. Give each profile a direction in the latent space and watch the angle between them respond.",
+          profileA: "Profile A",
+          profileB: "Profile B",
+          vecLabel: "(tech, coffee, asunción)",
+          hintA: "Cyan arrow · the first person",
+          hintB: "Magenta arrow · the second person",
+          sliderTech: "Tech",
+          sliderCafe: "Coffee",
+          sliderAsu: "Asunción",
+          svgAria: "Compass showing the angle between the two profile vectors",
+          svgCaption: "arrow length = |vector| · arc = angle θ between profiles",
+          statSim: "Cosine similarity",
+          statTheta: "Angle θ",
+          statAmarre: "Love Probability",
+          formulaHtml: "<strong style=\"color: var(--gold)\">How the spell works:</strong> each profile becomes a vector in a 3-dimensional latent space (<code>tech</code>, <code>coffee</code>, <code>asunción</code> — the same feature map as the Python spell). The engine computes <code>sim = A·B / (|A|·|B|)</code>, the angle <code>θ = acos(sim)</code>, and the <em>Love Probability</em> as <code>sim^1.3 × 100</code>. Above 80% the vectors are already staring at each other in latent space… 👀",
+          qsTitle: "Cast the terminal spells 🧙‍♀️",
+          qsIntro: "Set up once, then run any spell from the command line. Full instructions live in the <a href=\"https://github.com/ch1llc0d3/hechizo_matematico_demo#readme\" target=\"_blank\" rel=\"noopener\">README</a>.",
+          termVenv: "# macOS/Linux (Windows: .venv\\Scripts\\activate)",
+          term1: "# 💘 Spell 1 — Love Compass",
+          term2: "# 👁️ Spell 2 — Digital Eye",
+          term3: "# 📈 Spell 3 — Popularity Game",
+          term4: "# 🛡️ Bonus — HA Love Cluster",
+          footerP2: "The interactive compass runs the same math as <code>hechizo_matematico.py</code> — cosine similarity, angle, and a pinch of wizardry. Nothing here is meant to break your computer 💻🔮",
+          emptyStatus: "An empty profile points nowhere…",
+          emptySub: "Raise at least one trait on each profile to cast the spell.",
+          svgIdleAria: "Compass idle: at least one profile vector is empty.",
+          matchLine: "💘 IMMINENT MATCH",
+          matchSub: "The vectors are already staring at each other in latent space…",
+          altaLine: "✨ High affinity",
+          altaSub: "A couple more coffees and the cosine does the rest.",
+          modLine: "🌙 Moderate affinity",
+          modSub: "Maybe they need more dimensions in common.",
+          badge: "IMMINENT MATCH",
+          svgAriaTemplate: "Compass: the two profile vectors form an angle of {deg} degrees; Love Probability {pct} percent.",
+          langGroup: "Language",
+          langEn: "English",
+          langEs: "Español",
+          themeToLight: "Switch to light theme",
+          themeToDark: "Switch to dark theme"
+        },
+        es: {
+          title: "Kit del Mago Digital — hechizo_matematico",
+          h1: "Kit del Mago Digital 🐙💻🔮",
+          tagline: "Un pequeño laboratorio de magia para datos, vibras y redes — hechizos amables que puedes lanzar desde la terminal, y uno que puedes lanzar aquí mismo en tu navegador.",
+          cta: "✨ Ver el grimorio en GitHub",
+          spellsTitle: "Los Hechizos 🔮",
+          spellsIntro: "Cuatro demos en Python que convierten el matchmaking, las imágenes y la popularidad en matemáticas que puedes ver.",
+          card1Title: "Hechizo 1 — La Brújula del Amor",
+          card1Desc: "Convierte dos perfiles en flechas en el espacio 3D y mide el ángulo entre ellas con similitud coseno. Menor ángulo = más «hmm… interesante…». Un detector de crush matemático.",
+          card2Title: "Hechizo 2 — El Ojo Digital",
+          card2Desc: "Detección de objetos YOLO en tu webcam o una foto, más lectura de metadatos EXIF — cuándo, dónde, qué cámara. Una bola de cristal chismosa para imágenes. Solo con fines educativos.",
+          card3Title: "Hechizo 3 — El Juego de la Popularidad",
+          card3Desc: "Una app de citas de mentira dirigida como un sistema SRE: 50 nodos con puntuaciones Elo, los matches son transacciones exitosas, los dislikes son timeouts, y un balanceador mantiene a raya a los supernodos.",
+          card4Title: "Hechizo Bonus — El Clúster de Amor de Alta Disponibilidad",
+          card4Desc: "El hermano del Juego de la Popularidad: efectos de red exponenciales cuando nodos con Elo alto conocen nodos con Elo bajo, balanceo consciente del tráfico y un registro en vivo de promociones al Nivel 1 «Pico de Deseabilidad».",
+          compassTitle: "La Brújula del Amor, en tu navegador 💘",
+          compassIntro: "La misma matemática que <code>hechizo_matematico.py</code>, sin necesidad de Python. Dale a cada perfil una dirección en el espacio latente y observa cómo responde el ángulo entre ellos.",
+          profileA: "Perfil A",
+          profileB: "Perfil B",
+          vecLabel: "(tech, café, asunción)",
+          hintA: "Flecha cian · la primera persona",
+          hintB: "Flecha magenta · la segunda persona",
+          sliderTech: "Tech",
+          sliderCafe: "Café",
+          sliderAsu: "Asunción",
+          svgAria: "Brújula que muestra el ángulo entre los dos vectores de perfil",
+          svgCaption: "longitud de flecha = |vector| · arco = ángulo θ entre perfiles",
+          statSim: "Similitud coseno",
+          statTheta: "Ángulo θ",
+          statAmarre: "Probabilidad de Amarre",
+          formulaHtml: "<strong style=\"color: var(--gold)\">Cómo funciona el hechizo:</strong> cada perfil se convierte en un vector en un espacio latente de 3 dimensiones (<code>tech</code>, <code>café</code>, <code>asunción</code> — el mismo mapa de características que el hechizo de Python). El motor calcula <code>sim = A·B / (|A|·|B|)</code>, el ángulo <code>θ = acos(sim)</code>, y la <em>Probabilidad de Amarre</em> como <code>sim^1.3 × 100</code>. Por encima del 80%, los vectores ya se están mirando fijamente en el espacio latente… 👀",
+          qsTitle: "Lanza los hechizos de terminal 🧙‍♀️",
+          qsIntro: "Configura una vez y luego lanza cualquier hechizo desde la línea de comandos. Las instrucciones completas viven en el <a href=\"https://github.com/ch1llc0d3/hechizo_matematico_demo#readme\" target=\"_blank\" rel=\"noopener\">README</a>.",
+          termVenv: "# macOS/Linux (Windows: .venv\\Scripts\\activate)",
+          term1: "# 💘 Hechizo 1 — Brújula del Amor",
+          term2: "# 👁️ Hechizo 2 — Ojo Digital",
+          term3: "# 📈 Hechizo 3 — Juego de la Popularidad",
+          term4: "# 🛡️ Bonus — Clúster de Amor HA",
+          footerP2: "La brújula interactiva ejecuta la misma matemática que <code>hechizo_matematico.py</code> — similitud coseno, ángulo y una pizca de magia. Nada aquí está pensado para romper tu computadora 💻🔮",
+          emptyStatus: "Un perfil vacío no apunta a ninguna parte…",
+          emptySub: "Sube al menos un rasgo de cada perfil para lanzar el hechizo.",
+          svgIdleAria: "Brújula en reposo: al menos un vector de perfil está vacío.",
+          matchLine: "💘 MATCH INMINENTE",
+          matchSub: "Los vectores ya se están mirando raro en el espacio latente…",
+          altaLine: "✨ Alta afinidad",
+          altaSub: "Un par de cafés más y el coseno hace el resto.",
+          modLine: "🌙 Afinidad moderada",
+          modSub: "Tal vez necesitan más dimensiones en común.",
+          badge: "MATCH INMINENTE",
+          svgAriaTemplate: "Brújula: los dos vectores de perfil forman un ángulo de {deg} grados; Probabilidad de Amarre {pct} por ciento.",
+          langGroup: "Idioma",
+          langEn: "Inglés",
+          langEs: "Español",
+          themeToLight: "Cambiar a tema claro",
+          themeToDark: "Cambiar a tema oscuro"
+        }
+      };
+
+      var LANG = document.documentElement.getAttribute("data-lang");
+      if (LANG !== "en" && LANG !== "es") { LANG = "en"; }
+      var THEME = document.documentElement.getAttribute("data-theme");
+      if (THEME !== "light" && THEME !== "dark") { THEME = "dark"; }
+
+      function t(key) {
+        return (I18N[LANG] && I18N[LANG][key]) || I18N.en[key] || key;
+      }
+
+      function store(key, value) {
+        try { localStorage.setItem(key, value); } catch (e) { /* storage unavailable */ }
+      }
+      function loadStored(key) {
+        try { return localStorage.getItem(key); } catch (e) { return null; }
+      }
+
+      function syncThemeButton() {
+        var btn = document.getElementById("theme-toggle");
+        var dark = THEME === "dark";
+        btn.setAttribute("aria-pressed", dark ? "true" : "false");
+        btn.setAttribute("aria-label", dark ? t("themeToLight") : t("themeToDark"));
+        btn.textContent = dark ? "☀️" : "🌙";
+      }
+
+      function applyI18n() {
+        document.title = t("title");
+        document.documentElement.setAttribute("lang", LANG);
+        document.documentElement.setAttribute("data-lang", LANG);
+
+        var i, nodes;
+        nodes = document.querySelectorAll("[data-i18n]");
+        for (i = 0; i < nodes.length; i++) {
+          nodes[i].textContent = t(nodes[i].getAttribute("data-i18n"));
+        }
+        nodes = document.querySelectorAll("[data-i18n-html]");
+        for (i = 0; i < nodes.length; i++) {
+          nodes[i].innerHTML = t(nodes[i].getAttribute("data-i18n-html"));
+        }
+        nodes = document.querySelectorAll("[data-i18n-aria-label]");
+        for (i = 0; i < nodes.length; i++) {
+          nodes[i].setAttribute("aria-label", t(nodes[i].getAttribute("data-i18n-aria-label")));
+        }
+
+        document.getElementById("lang-en").setAttribute("aria-pressed", LANG === "en" ? "true" : "false");
+        document.getElementById("lang-es").setAttribute("aria-pressed", LANG === "es" ? "true" : "false");
+        document.getElementById("lang-en").setAttribute("aria-label", t("langEn"));
+        document.getElementById("lang-es").setAttribute("aria-label", t("langEs"));
+        syncThemeButton();
+      }
+
+      function setTheme(theme, persist) {
+        THEME = theme === "light" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", THEME);
+        if (persist !== false) { store("hm-theme", THEME); }
+        syncThemeButton();
+      }
+
+      function setLang(lang) {
+        LANG = lang === "es" ? "es" : "en";
+        applyI18n();
+        store("hm-lang", LANG);
+        update();
+      }
+
+      document.getElementById("theme-toggle").addEventListener("click", function () {
+        setTheme(THEME === "dark" ? "light" : "dark");
+      });
+      document.getElementById("lang-en").addEventListener("click", function () {
+        if (LANG !== "en") { setLang("en"); }
+      });
+      document.getElementById("lang-es").addEventListener("click", function () {
+        if (LANG !== "es") { setLang("es"); }
+      });
+
+      // follow the system theme only while the visitor hasn't picked explicitly
+      var themeMq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+      if (themeMq) {
+        var onSystemTheme = function (e) {
+          if (!loadStored("hm-theme")) { setTheme(e.matches ? "light" : "dark", false); }
+        };
+        if (themeMq.addEventListener) { themeMq.addEventListener("change", onSystemTheme); }
+        else if (themeMq.addListener) { themeMq.addListener(onSystemTheme); }
+      }
+
+      /* ================= compass ================= */
 
       var IDS = ["tech", "cafe", "asu"];
       var PREFIXES = ["a", "b"];
@@ -673,11 +1040,11 @@ python dating_sre_simulation.py    <span class="c"># 🛡️ Bonus — HA Love C
           thetaVal.textContent = "—";
           amarreVal.textContent = "—";
           fill.style.width = "0%";
-          statusLine.textContent = "Un perfil vacío no apunta a ninguna parte…";
+          statusLine.textContent = t("emptyStatus");
           statusLine.className = "status-line moderada";
-          statusSub.textContent = "Sube al menos un rasgo de cada perfil para lanzar el hechizo.";
+          statusSub.textContent = t("emptySub");
           badge.setAttribute("visibility", "hidden");
-          svg.setAttribute("aria-label", "Compass idle: at least one profile vector is empty.");
+          svg.setAttribute("aria-label", t("svgIdleAria"));
           setArrow("a", 0, 0);
           setArrow("b", 0, 0);
           document.getElementById("arc").setAttribute("d", "");
@@ -698,17 +1065,17 @@ python dating_sre_simulation.py    <span class="c"># 🛡️ Bonus — HA Love C
 
         // status labels — same thresholds as the Python spell
         if (amarre > 80) {
-          statusLine.textContent = "💘 MATCH INMINENTE";
+          statusLine.textContent = t("matchLine");
           statusLine.className = "status-line match";
-          statusSub.textContent = "Los vectores ya se están mirando raro en el espacio latente…";
+          statusSub.textContent = t("matchSub");
         } else if (amarre > 50) {
-          statusLine.textContent = "✨ Alta afinidad";
+          statusLine.textContent = t("altaLine");
           statusLine.className = "status-line alta";
-          statusSub.textContent = "Un par de cafés más y el coseno hace el resto.";
+          statusSub.textContent = t("altaSub");
         } else {
-          statusLine.textContent = "🌙 Afinidad moderada";
+          statusLine.textContent = t("modLine");
           statusLine.className = "status-line moderada";
-          statusSub.textContent = "Tal vez necesitan más dimensiones en común.";
+          statusSub.textContent = t("modSub");
         }
 
         // --- draw the compass: arrows split symmetrically around the axis ---
@@ -737,15 +1104,16 @@ python dating_sre_simulation.py    <span class="c"># 🛡️ Bonus — HA Love C
         if (thetaDeg < 25) {
           badge.setAttribute("x", "196");
           badge.setAttribute("y", "34");
+          badge.textContent = t("badge");
           badge.setAttribute("visibility", "visible");
         } else {
           badge.setAttribute("visibility", "hidden");
         }
 
         svg.setAttribute("aria-label",
-          "Compass: the two profile vectors form an angle of " +
-          thetaDeg.toFixed(1) + " degrees; Probabilidad de Amarre " +
-          amarre.toFixed(1) + " percent.");
+          t("svgAriaTemplate")
+            .replace("{deg}", thetaDeg.toFixed(1))
+            .replace("{pct}", amarre.toFixed(1)));
       }
 
       PREFIXES.forEach(function (p) {
@@ -754,6 +1122,7 @@ python dating_sre_simulation.py    <span class="c"># 🛡️ Bonus — HA Love C
         });
       });
 
+      applyI18n();
       update();
     })();
   </script>
