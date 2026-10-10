@@ -552,6 +552,33 @@
       font-size: 0.9em;
     }
 
+    /* ---------- Reveal + micro animations (JS-gated, progressive enhancement) ---------- */
+    /* .js-reveal is only added by script when IntersectionObserver exists and the
+       visitor has not asked for reduced motion — so content is never pre-hidden
+       for no-JS, reduced-motion, or older browsers. */
+    .js-reveal { opacity: 0; }
+
+    .js-reveal.revealed {
+      animation: reveal-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes reveal-in {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* gentle float on each spell card's glyph; per-card offsets keep them
+       out of sync. Pure CSS animation — the reduced-motion media query
+       below disables it automatically. */
+    @keyframes glyph-float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-5px); }
+    }
+    .card .glyph { animation: glyph-float 3.4s ease-in-out infinite; }
+    .cards .card:nth-child(2) .glyph { animation-delay: 0.45s; }
+    .cards .card:nth-child(3) .glyph { animation-delay: 0.9s; }
+    .cards .card:nth-child(4) .glyph { animation-delay: 1.35s; }
+
     /* ---------- Responsive ---------- */
     @media (max-width: 780px) {
       .compass-shell { grid-template-columns: 1fr; }
@@ -1121,6 +1148,60 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           document.getElementById(p + "-" + id).addEventListener("input", update);
         });
       });
+
+      /* ================= reveal animations ================= */
+
+      var REDUCED_MOTION = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function setupReveal() {
+        // Progressive enhancement only: skip entirely for reduced-motion
+        // visitors or browsers without IntersectionObserver, so content is
+        // never pre-hidden for anyone.
+        if (REDUCED_MOTION || !("IntersectionObserver" in window)) { return; }
+
+        // Ordered groups: elements inside a group cascade with a per-index
+        // delay; groups reveal independently as they scroll into view.
+        var groups = [
+          { selector: ".hero h1, .hero .tagline, .hero .cta", step: 130 },
+          { selector: "#spells h2, #spells .section-intro", step: 110 },
+          { selector: "#spells .card", step: 110 },
+          { selector: "#compass h2, #compass .section-intro", step: 110 },
+          { selector: "#compass .compass-shell, #compass .formula", step: 140 },
+          { selector: "#quickstart h2, #quickstart .section-intro, #quickstart .terminal", step: 110 }
+        ];
+
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) { return; }
+            var el = entry.target;
+            observer.unobserve(el); // one-shot: reveal once, never re-hide
+            el.classList.add("revealed");
+
+            // Once the entrance animation finishes, drop the helper classes
+            // and inline delay so the element's original hover transitions
+            // (e.g. .card:hover) work untouched.
+            var cleanup = function () {
+              el.classList.remove("js-reveal", "revealed");
+              el.style.animationDelay = "";
+              el.removeEventListener("animationend", cleanup);
+            };
+            el.addEventListener("animationend", cleanup);
+            setTimeout(cleanup, 1800); // fallback if animationend never fires
+          });
+        }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+
+        groups.forEach(function (group) {
+          var els = document.querySelectorAll(group.selector);
+          for (var i = 0; i < els.length; i++) {
+            els[i].classList.add("js-reveal");
+            els[i].style.animationDelay = (i * group.step) + "ms";
+            observer.observe(els[i]);
+          }
+        });
+      }
+
+      setupReveal();
 
       applyI18n();
       update();
