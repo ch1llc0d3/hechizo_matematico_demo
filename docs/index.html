@@ -849,6 +849,10 @@
     .elo-table td.rank { color: var(--ink-dim); }
     .elo-table td.elo { color: var(--cyan); font-weight: 600; }
     .elo-table tr.peak td.elo { color: var(--gold); }
+    .elo-table td.tier { text-align: center; }
+    .elo-table td.tier.t1 { color: var(--gold); font-weight: 700; }
+    .elo-table td.tier.t2 { color: var(--cyan); }
+    .elo-table td.tier.t3 { color: var(--ink-dim); }
 
     .elo-side {
       display: flex;
@@ -1143,12 +1147,12 @@
           <p data-i18n="card3Desc">A pretend dating app run like an SRE system: 50 nodes with Elo scores, matches are successful transactions, dislikes are timeouts, and a load balancer keeps super-nodes in check.</p>
         </a>
 
-        <article class="card bonus">
+        <a class="card bonus" href="#cluster" data-i18n-aria-label="card4LinkAria">
           <span class="glyph" aria-hidden="true">🛡️</span>
           <h3 data-i18n="card4Title">Bonus Spell — The HA Love Cluster</h3>
           <code>dating_sre_simulation.py</code>
           <p data-i18n="card4Desc">The Popularity Game&rsquo;s sibling: exponential network effects when high-Elo nodes meet low-Elo nodes, traffic-aware load balancing, and a live Tier&nbsp;1 &ldquo;Desirability Peak&rdquo; promotion log.</p>
-        </article>
+        </a>
       </div>
     </section>
 
@@ -1442,6 +1446,90 @@
       </div>
     </section>
 
+    <!-- ============ INTERACTIVE HA LOVE CLUSTER ============ -->
+    <section id="cluster" aria-labelledby="cluster-title">
+      <h2 id="cluster-title" data-i18n="clusterTitle">The HA Love Cluster, in your browser 🛡️</h2>
+      <p class="section-intro" data-i18n-html="clusterIntro">The sibling of the Popularity Game — <code>dating_sre_simulation.py</code>, no Python required. 30 nodes run like a high-availability distributed system: matches are successful transactions, rejections are timeouts, a traffic-aware load balancer keeps super-nodes from hogging all the attention, and every Tier&nbsp;1 promotion is stamped into a live log. Press start and watch the cluster converge.</p>
+
+      <div class="elo-shell">
+        <div>
+          <div class="elo-controls">
+            <button type="button" class="elo-btn" id="cluster-run" data-i18n="clusterRunBtn">▶️ Start cluster</button>
+            <button type="button" class="elo-btn" id="cluster-reset" data-i18n="clusterResetBtn">🔄 Reset</button>
+            <label class="elo-speed">
+              <span data-i18n="clusterSpeed">Speed</span>
+              <input type="range" id="cluster-speed" min="30" max="400" step="10" value="150" aria-label="Cluster simulation speed">
+              <output id="cluster-speed-out" for="cluster-speed">150ms</output>
+            </label>
+          </div>
+
+          <div class="elo-table-wrap">
+            <table class="elo-table" aria-live="polite">
+              <thead>
+                <tr>
+                  <th data-i18n="clusterColRank">#</th>
+                  <th data-i18n="clusterColNode">Node</th>
+                  <th class="num" data-i18n="clusterColElo">Elo</th>
+                  <th data-i18n="clusterColTier">Tier</th>
+                  <th class="num" data-i18n="clusterColInt">Interactions</th>
+                </tr>
+              </thead>
+              <tbody id="cluster-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="elo-side">
+          <div class="elo-panel">
+            <h3 data-i18n="clusterMetricsTitle">Cluster metrics — is traffic spread out?</h3>
+            <div class="stat-grid" style="margin-bottom: 0;">
+              <div class="stat">
+                <span class="k" data-i18n="clusterStatEntropy">Entropy</span>
+                <span class="v" id="cluster-entropy-val">—</span>
+              </div>
+              <div class="stat">
+                <span class="k" data-i18n="clusterStatTicks">Interactions</span>
+                <span class="v" id="cluster-ticks">0</span>
+              </div>
+              <div class="stat">
+                <span class="k" data-i18n="clusterStatTier1">Tier 1 nodes</span>
+                <span class="v" id="cluster-tier1">0</span>
+              </div>
+            </div>
+            <div class="entropy-bar" aria-hidden="true"><div class="fill" id="cluster-entropy-fill"></div></div>
+          </div>
+
+          <div class="elo-panel">
+            <h3 data-i18n="clusterTrafficTitle">Live traffic feed</h3>
+            <ul class="elo-log" id="cluster-log" aria-live="polite"></ul>
+          </div>
+
+          <div class="elo-panel">
+            <h3 data-i18n="clusterPromoTitle">Promotion log — Tier 1 = Desirability Peak</h3>
+            <ul class="elo-log" id="cluster-promo-log" aria-live="polite"></ul>
+          </div>
+
+          <p class="elo-status" id="cluster-status"></p>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="formula" data-i18n-html="clusterFormulaHtml">
+        <strong style="color: var(--gold)">How the spell works:</strong>
+        30 nodes start at Elo 1500. Every tick the load balancer decides who meets whom:
+        higher-Elo nodes attract more traffic, but super-nodes are penalized
+        (<code>weight = elo/max · 1/(1 + 0.3·traffic)</code>) so everyone gets exposure.
+        Each encounter is a transaction — a <em>match</em> is a successful transaction
+        that pays 1/1 to both nodes, a rejection scores
+        1/0 — and the Elo delta <code>K·(S−E)</code> is multiplied by a <strong>network
+        effect</strong> <code>min(e^(gap/400), 3)</code>: the bigger the Elo gap, the bigger
+        the ranking quake. Cross 1800 and a node is promoted to Tier 1 — the
+        <em>Desirability Peak</em> — and stamped in the promotion log. The
+        <em>entropy</em> meter measures how evenly interactions spread across the cluster.
+      </div>
+    </section>
+
     <!-- ============ QUICK START ============ -->
     <section id="quickstart" aria-labelledby="quickstart-title">
       <h2 id="quickstart-title" data-i18n="qsTitle">Cast the terminal spells 🧙‍♀️</h2>
@@ -1577,6 +1665,32 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           tinderIdle: "Drag the card or press Like / Pass to start swiping.",
           tinderSwipeHint: "← pass · like →",
           tinderFormulaHtml: "<strong style=\"color: var(--gold)\">How the spell works:</strong> every profile has an Elo score — the app's estimate of how desirable they are. When you like someone, the app computes your win probability <code>E = 1 / (1 + 10^((theirElo − yourElo)/400))</code>: that's the chance they swipe back. Match → both scores rise, but beating someone above your league pays far more (upset bonus <code>K = 32 · (1 + gap/400)^1.4</code>). Rejected → your score drops, and theirs climbs a little, because being wanted (and choosing) is itself a signal. Passing withholds attention, which slowly deflates the passed-on profile. This is the same rating loop as <code>elo_ranking_sim.py</code> — except here <em>you</em> are one of the nodes.",
+          clusterTitle: "The HA Love Cluster, in your browser 🛡️",
+          clusterIntro: "The sibling of the Popularity Game — <code>dating_sre_simulation.py</code>, no Python required. 30 nodes run like a high-availability distributed system: matches are successful transactions, rejections are timeouts, a traffic-aware load balancer keeps super-nodes from hogging all the attention, and every Tier&nbsp;1 promotion is stamped into a live log. Press start and watch the cluster converge.",
+          clusterRunBtn: "▶️ Start cluster",
+          clusterPauseBtn: "⏸️ Pause",
+          clusterResetBtn: "🔄 Reset",
+          clusterSpeed: "Speed",
+          clusterColRank: "#",
+          clusterColNode: "Node",
+          clusterColElo: "Elo",
+          clusterColTier: "Tier",
+          clusterColInt: "Interactions",
+          clusterMetricsTitle: "Cluster metrics — is traffic spread out?",
+          clusterStatEntropy: "Entropy",
+          clusterStatTicks: "Interactions",
+          clusterStatTier1: "Tier 1 nodes",
+          clusterTrafficTitle: "Live traffic feed",
+          clusterPromoTitle: "Promotion log — Tier 1 = Desirability Peak",
+          clusterOk: "200 OK 💘",
+          clusterTimeout: "TIMEOUT 💔",
+          clusterPromoted: "🚀 {node} promoted to Tier 1 — Desirability Peak",
+          clusterNoPromos: "No promotions yet.",
+          clusterRunning: "Cluster is live — watch the load balancer spread the love 🛡️",
+          clusterPaused: "Paused — nodes cooling down…",
+          clusterResetDone: "Cluster rebooted — 30 nodes, all equally desirable.",
+          clusterFormulaHtml: "<strong style=\"color: var(--gold)\">How the spell works:</strong> 30 nodes start at Elo 1500. Every tick the load balancer decides who meets whom: higher-Elo nodes attract more traffic, but super-nodes are penalized (<code>weight = elo/max · 1/(1 + 0.3·traffic)</code>) so everyone gets exposure. Each encounter is a transaction — a <em>match</em> is a successful transaction that pays 1/1 to both nodes, a rejection scores 1/0 — and the Elo delta <code>K·(S−E)</code> is multiplied by a <strong>network effect</strong> <code>min(e^(gap/400), 3)</code>: the bigger the Elo gap, the bigger the ranking quake. Cross 1800 and a node is promoted to Tier 1 — the <em>Desirability Peak</em> — and stamped in the promotion log. The <em>entropy</em> meter measures how evenly interactions spread across the cluster.",
+          card4LinkAria: "Open the interactive HA Love Cluster",
           card3LinkAria: "Open the interactive Popularity Game",
           svgIdleAria: "Compass idle: at least one profile vector is empty.",
           matchLine: "💘 IMMINENT MATCH",
@@ -1694,6 +1808,32 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           tinderIdle: "Arrastra la tarjeta o pulsa Like / Pasar para empezar.",
           tinderSwipeHint: "← pasar · like →",
           tinderFormulaHtml: "<strong style=\"color: var(--gold)\">Cómo funciona el hechizo:</strong> cada perfil tiene una puntuación Elo — la estimación de la app sobre cuán deseable es. Cuando le das like a alguien, la app calcula tu probabilidad de «victoria» <code>E = 1 / (1 + 10^((suElo − tuElo)/400))</code>: la probabilidad de que te corresponda. Match → ambas puntuaciones suben, pero conquistar a alguien por encima de tu liga paga mucho más (bonus por sorpresa <code>K = 32 · (1 + brecha/400)^1.4</code>). Rechazo → tu puntuación baja y la suya sube un poco, porque ser deseado (y elegir) también es una señal. Pasar retiene atención, lo que desinfla lentamente al perfil rechazado. Es el mismo bucle de puntuaciones que <code>elo_ranking_sim.py</code> — solo que aquí <em>tú</em> eres uno de los nodos.",
+          clusterTitle: "El Clúster de Amor de Alta Disponibilidad, en tu navegador 🛡️",
+          clusterIntro: "El hermano del Juego de la Popularidad — <code>dating_sre_simulation.py</code>, sin necesidad de Python. 30 nodos corren como un sistema distribuido de alta disponibilidad: los matches son transacciones exitosas, los rechazos son timeouts, un balanceador consciente del tráfico evita que los supernodos acaparen toda la atención, y cada promoción a Nivel&nbsp;1 queda sellada en un registro en vivo. Dale a empezar y mira cómo converge el clúster.",
+          clusterRunBtn: "▶️ Iniciar clúster",
+          clusterPauseBtn: "⏸️ Pausar",
+          clusterResetBtn: "🔄 Reiniciar",
+          clusterSpeed: "Velocidad",
+          clusterColRank: "#",
+          clusterColNode: "Nodo",
+          clusterColElo: "Elo",
+          clusterColTier: "Nivel",
+          clusterColInt: "Interacciones",
+          clusterMetricsTitle: "Métricas del clúster — ¿se reparte el tráfico?",
+          clusterStatEntropy: "Entropía",
+          clusterStatTicks: "Interacciones",
+          clusterStatTier1: "Nodos Nivel 1",
+          clusterTrafficTitle: "Tráfico en vivo",
+          clusterPromoTitle: "Registro de promociones — Nivel 1 = Pico de Deseabilidad",
+          clusterOk: "200 OK 💘",
+          clusterTimeout: "TIMEOUT 💔",
+          clusterPromoted: "🚀 {node} ascendió a Nivel 1 — Pico de Deseabilidad",
+          clusterNoPromos: "Aún no hay promociones.",
+          clusterRunning: "El clúster está en vivo — mira cómo el balanceador reparte el cariño 🛡️",
+          clusterPaused: "En pausa — los nodos se están enfriando…",
+          clusterResetDone: "Clúster reiniciado — 30 nodos, todos igual de deseables.",
+          clusterFormulaHtml: "<strong style=\"color: var(--gold)\">Cómo funciona el hechizo:</strong> 30 nodos empiezan con Elo 1500. En cada tick el balanceador decide quién conoce a quién: los nodos con más Elo atraen más tráfico, pero los supernodos son penalizados (<code>peso = elo/max · 1/(1 + 0.3·tráfico)</code>) para que todos tengan su momento. Cada encuentro es una transacción — un <em>match</em> es una transacción exitosa que paga 1/1 a ambos nodos, un rechazo puntúa 1/0 — y el delta Elo <code>K·(S−E)</code> se multiplica por un <strong>efecto de red</strong> <code>min(e^(brecha/400), 3)</code>: a mayor brecha de Elo, mayor temblor en el ranking. Cruzar 1800 promueve al nodo a Nivel 1 — el <em>Pico de Deseabilidad</em> — y lo sella en el registro de promociones. El medidor de <em>entropía</em> mide qué tan repartidas están las interacciones en el clúster.",
+          card4LinkAria: "Abrir el Clúster de Amor de Alta Disponibilidad interactivo",
           card3LinkAria: "Abrir el Juego de la Popularidad interactivo",
           svgIdleAria: "Brújula en reposo: al menos un vector de perfil está vacío.",
           matchLine: "💘 MATCH INMINENTE",
@@ -1975,6 +2115,8 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           { selector: "#compass .compass-shell, #compass .formula", step: 140 },
           { selector: "#eye h2, #eye .section-intro, #eye .eye-shell, #eye .formula", step: 110 },
           { selector: "#elo h2, #elo .section-intro, #elo .elo-shell, #elo .formula", step: 110 },
+          { selector: "#tinder h2, #tinder .section-intro, #tinder .tinder-shell, #tinder .formula", step: 110 },
+          { selector: "#cluster h2, #cluster .section-intro, #cluster .elo-shell, #cluster .formula", step: 110 },
           { selector: "#quickstart h2, #quickstart .section-intro, #quickstart .terminal", step: 110 }
         ];
 
@@ -2293,6 +2435,16 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
 
       setupEye();
 
+      // Friendly names so leaderboards read like people, not servers.
+      // Shared by the Popularity Game and the HA Love Cluster widgets.
+      var NAMES = ["Alex", "Bella", "Carlos", "Dana", "Eli", "Fiona", "Gus", "Hana",
+        "Ivan", "Julia", "Kai", "Lena", "Marco", "Nina", "Omar", "Paula", "Quinn",
+        "Rosa", "Sam", "Tessa", "Uma", "Viktor", "Wanda", "Xavi", "Yara", "Zoe",
+        "Bruno", "Cleo", "Diego", "Elsa", "Felipe", "Greta", "Hugo", "Iris",
+        "Joel", "Katia", "Leo", "Mia", "Nico", "Olga", "Pablo", "Renata",
+        "Sofia", "Tomas", "Ursula", "Vera", "Walter", "Ximena", "Yusuf", "Coco"];
+      function nodeName(id) { return NAMES[id % NAMES.length]; }
+
       /* ================= elo / popularity game ================= */
 
       function setupElo() {
@@ -2440,15 +2592,6 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
           var txt = (d >= 0 ? "+" : "") + d.toFixed(1);
           return '<span class="' + (d >= 0 ? "up" : "down") + '">' + txt + "</span>";
         }
-
-        // Friendly names so the leaderboard reads like people, not servers.
-        var NAMES = ["Alex", "Bella", "Carlos", "Dana", "Eli", "Fiona", "Gus", "Hana",
-          "Ivan", "Julia", "Kai", "Lena", "Marco", "Nina", "Omar", "Paula", "Quinn",
-          "Rosa", "Sam", "Tessa", "Uma", "Viktor", "Wanda", "Xavi", "Yara", "Zoe",
-          "Bruno", "Cleo", "Diego", "Elsa", "Felipe", "Greta", "Hugo", "Iris",
-          "Joel", "Katia", "Leo", "Mia", "Nico", "Olga", "Pablo", "Renata",
-          "Sofia", "Tomas", "Ursula", "Vera", "Walter", "Ximena", "Yusuf", "Coco"];
-        function nodeName(id) { return NAMES[id % NAMES.length]; }
 
         function render() {
           // Top 10 table
@@ -2984,6 +3127,282 @@ python dating_sre_simulation.py    <span class="c" data-i18n="term4"># 🛡️ B
       }
 
       setupTinder();
+
+      /* ================= HA love cluster (dating_sre_simulation.py) ================= */
+
+      function setupCluster() {
+        var runBtn = document.getElementById("cluster-run");
+        var resetBtn = document.getElementById("cluster-reset");
+        var speedInput = document.getElementById("cluster-speed");
+        var speedOut = document.getElementById("cluster-speed-out");
+        var tbody = document.getElementById("cluster-tbody");
+        var entropyVal = document.getElementById("cluster-entropy-val");
+        var entropyFill = document.getElementById("cluster-entropy-fill");
+        var tier1El = document.getElementById("cluster-tier1");
+        var ticksEl = document.getElementById("cluster-ticks");
+        var logEl = document.getElementById("cluster-log");
+        var promoEl = document.getElementById("cluster-promo-log");
+        var statusEl = document.getElementById("cluster-status");
+
+        if (!runBtn || !tbody) { return; } // section missing — nothing to do
+
+        // --- config mirroring dating_sre_simulation.py ---
+        var NUM_NODES = 30;
+        var INITIAL_ELO = 1500.0;
+        var K_FACTOR = 32.0;
+        var SUPER_NODE_PENALTY = 0.3;
+        var NETWORK_SCALE = 400.0;
+        var NETWORK_MAX = 3.0;
+        var TIER_1_ELO = 1800.0;
+        var TIER_2_ELO = 1600.0;
+        var LOG_ENTRIES = 8;
+        var PROMO_ENTRIES = 12;
+
+        var nodes = [];
+        var ticks = 0;
+        var timer = null;
+        var running = false;
+        var hasPromos = false;
+
+        function expectedScore(eloSelf, eloOpp) {
+          return 1.0 / (1.0 + Math.pow(10.0, (eloOpp - eloSelf) / 400.0));
+        }
+
+        // Maverick network effect: high–low Elo pairs get exponential impact.
+        function networkMultiplier(eloA, eloB) {
+          var gap = Math.max(0.0, Math.max(eloA, eloB) - Math.min(eloA, eloB));
+          return Math.min(Math.exp(gap / NETWORK_SCALE), NETWORK_MAX);
+        }
+
+        function getTier(elo) {
+          if (elo >= TIER_1_ELO) { return 1; }
+          if (elo >= TIER_2_ELO) { return 2; }
+          return 3;
+        }
+
+        // SRE load balancer: prefer higher Elo, but penalize super-nodes that
+        // already received a lot of traffic so everyone gets exposure.
+        function selectPeer(requester) {
+          var candidates = nodes.filter(function (n) { return n !== requester; });
+          if (!candidates.length) { return null; }
+          var eloMax = -Infinity, i;
+          for (i = 0; i < candidates.length; i++) {
+            if (candidates[i].elo > eloMax) { eloMax = candidates[i].elo; }
+          }
+          var total = 0;
+          var weights = candidates.map(function (n) {
+            var eloNorm = n.elo / Math.max(eloMax, 1.0);
+            var penalty = 1.0 / (1.0 + SUPER_NODE_PENALTY * n.interactions);
+            var w = eloNorm * penalty;
+            total += w;
+            return w;
+          });
+          if (total <= 0) {
+            return candidates[Math.floor(Math.random() * candidates.length)];
+          }
+          var r = Math.random() * total;
+          for (i = 0; i < candidates.length; i++) {
+            r -= weights[i];
+            if (r <= 0) { return candidates[i]; }
+          }
+          return candidates[candidates.length - 1];
+        }
+
+        function resetNodes() {
+          nodes = [];
+          for (var i = 0; i < NUM_NODES; i++) {
+            nodes.push({
+              id: i,
+              elo: INITIAL_ELO,
+              interactions: 0
+            });
+          }
+          ticks = 0;
+          hasPromos = false;
+          logEl.innerHTML = "";
+          promoEl.innerHTML = "";
+        }
+
+        function fmtDelta(d) {
+          var txt = (d >= 0 ? "+" : "") + d.toFixed(1);
+          return '<span class="' + (d >= 0 ? "up" : "down") + '">' + txt + "</span>";
+        }
+
+        function render() {
+          // Top 10 table with tiers
+          var sorted = nodes.slice().sort(function (x, y) { return y.elo - x.elo; }).slice(0, 10);
+          var html = "";
+          sorted.forEach(function (nd, i) {
+            var tier = getTier(nd.elo);
+            html += "<tr" + (tier === 1 ? ' class="peak"' : "") + ">" +
+              '<td class="rank">' + (i + 1) + "</td>" +
+              "<td>" + nodeName(nd.id) + "</td>" +
+              '<td class="num elo">' + nd.elo.toFixed(1) + "</td>" +
+              '<td class="tier t' + tier + '">T' + tier + "</td>" +
+              '<td class="num">' + nd.interactions + "</td>" +
+              "</tr>";
+          });
+          tbody.innerHTML = html;
+
+          // System entropy over the interaction distribution (like the Python
+          // spell's system_entropy): how evenly traffic spreads across nodes.
+          var total = 0, i;
+          for (i = 0; i < nodes.length; i++) { total += nodes[i].interactions; }
+          var h = 0;
+          if (total > 0) {
+            for (i = 0; i < nodes.length; i++) {
+              if (nodes[i].interactions > 0) {
+                var p = nodes[i].interactions / total;
+                h -= p * Math.log2(p);
+              }
+            }
+          }
+          entropyVal.textContent = h.toFixed(3);
+          var maxH = Math.log2(nodes.length) || 1;
+          entropyFill.style.width = ((h / maxH) * 100).toFixed(1) + "%";
+          ticksEl.textContent = String(ticks);
+
+          var tier1 = 0;
+          for (i = 0; i < nodes.length; i++) {
+            if (nodes[i].elo >= TIER_1_ELO) { tier1++; }
+          }
+          tier1El.textContent = String(tier1);
+        }
+
+        function pushLog(entry) {
+          var li = document.createElement("li");
+          var who = document.createElement("span");
+          who.className = "who";
+          who.textContent = nodeName(entry.a) + " ⇄ " + nodeName(entry.b);
+          var out = document.createElement("span");
+          out.className = entry.match ? "out-match" : "out-dislike";
+          out.textContent = t(entry.match ? "clusterOk" : "clusterTimeout");
+          var delta = document.createElement("span");
+          delta.className = "delta";
+          delta.innerHTML = fmtDelta(entry.deltaA) + " / " + fmtDelta(entry.deltaB);
+          li.appendChild(who);
+          li.appendChild(out);
+          li.appendChild(delta);
+          logEl.insertBefore(li, logEl.firstChild);
+          while (logEl.children.length > LOG_ENTRIES) {
+            logEl.removeChild(logEl.lastChild);
+          }
+        }
+
+        function pushPromo(node) {
+          if (!hasPromos) { promoEl.innerHTML = ""; hasPromos = true; }
+          var li = document.createElement("li");
+          li.textContent = t("clusterPromoted").replace("{node}", nodeName(node.id));
+          promoEl.insertBefore(li, promoEl.firstChild);
+          while (promoEl.children.length > PROMO_ENTRIES) {
+            promoEl.removeChild(promoEl.lastChild);
+          }
+        }
+
+        function renderPromoPlaceholder() {
+          if (hasPromos) { return; }
+          promoEl.innerHTML = "";
+          var li = document.createElement("li");
+          li.className = "who";
+          li.textContent = t("clusterNoPromos");
+          promoEl.appendChild(li);
+        }
+
+        function setStatus(text, cls) {
+          statusEl.textContent = text;
+          statusEl.className = "elo-status" + (cls ? " " + cls : "");
+        }
+
+        function tick() {
+          // Load balancer: a random node requests a match, the balancer picks
+          // the peer (traffic-aware, super-nodes penalized).
+          var requester = nodes[Math.floor(Math.random() * nodes.length)];
+          var peer = selectPeer(requester);
+          if (!peer) { return; }
+
+          var eloA = requester.elo, eloB = peer.elo;
+          var eA = expectedScore(eloA, eloB);
+          var eB = 1.0 - eA;
+
+          // Random outcome, uniform like the Python spell:
+          // match (1/1 — a successful transaction pays both nodes),
+          // reject_a (A timed out), reject_b (B timed out).
+          var roll = Math.random();
+          var sA, sB, isMatch;
+          if (roll < 1 / 3) { sA = 1.0; sB = 1.0; isMatch = true; }
+          else if (roll < 2 / 3) { sA = 0.0; sB = 1.0; isMatch = false; }
+          else { sA = 1.0; sB = 0.0; isMatch = false; }
+
+          var mult = networkMultiplier(eloA, eloB);
+          var deltaA = K_FACTOR * (sA - eA) * mult;
+          var deltaB = K_FACTOR * (sB - eB) * mult;
+
+          var beforeA = requester.elo, beforeB = peer.elo;
+          requester.elo += deltaA;
+          peer.elo += deltaB;
+          requester.interactions++;
+          peer.interactions++;
+          ticks++;
+
+          // Promotion detection: Tier 1 = Desirability Peak
+          if (beforeA < TIER_1_ELO && requester.elo >= TIER_1_ELO) { pushPromo(requester); }
+          if (beforeB < TIER_1_ELO && peer.elo >= TIER_1_ELO) { pushPromo(peer); }
+
+          pushLog({ a: requester.id, b: peer.id, match: isMatch, deltaA: deltaA, deltaB: deltaB });
+          render();
+        }
+
+        function stop() {
+          if (timer) { clearInterval(timer); timer = null; }
+          running = false;
+          runBtn.textContent = t("clusterRunBtn");
+          setStatus(t("clusterPaused"), "paused");
+        }
+
+        function start() {
+          if (running) { return; }
+          running = true;
+          runBtn.textContent = t("clusterPauseBtn");
+          setStatus(t("clusterRunning"), "running");
+          timer = setInterval(tick, parseInt(speedInput.value, 10));
+        }
+
+        runBtn.addEventListener("click", function () {
+          if (running) { stop(); } else { start(); }
+        });
+
+        resetBtn.addEventListener("click", function () {
+          stop();
+          resetNodes();
+          render();
+          renderPromoPlaceholder();
+          setStatus(t("clusterResetDone"), "paused");
+        });
+
+        speedInput.addEventListener("input", function () {
+          speedOut.textContent = speedInput.value + "ms";
+          if (running) {
+            clearInterval(timer);
+            timer = setInterval(tick, parseInt(speedInput.value, 10));
+          }
+        });
+        speedOut.textContent = speedInput.value + "ms";
+
+        resetNodes();
+        render();
+        renderPromoPlaceholder();
+        setStatus(t("clusterPaused"), "paused");
+
+        // Re-render JS-drawn text when the language changes
+        document.addEventListener("hm:langchange", function () {
+          render();
+          renderPromoPlaceholder();
+          setStatus(running ? t("clusterRunning") : t("clusterPaused"),
+            running ? "running" : "paused");
+        });
+      }
+
+      setupCluster();
 
       setupReveal();
 
